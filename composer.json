@@ -1,0 +1,34 @@
+{
+    "name": "laravel/database",
+    "description": "Get Laravel 4.2.x database for your non laravel projects. Built on top of illuminate/database to provide migration, seeding and artisan support",
+    "keywords": ["laravel", "database", "sql", "orm"],
+    "minimum-stability": "dev",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Arul Kumaran",
+            "email": "arul@luracast.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/database": "4.2.*"
+    },
+    "require-dev": {
+        "illuminate/filesystem": "4.2.*",
+        "illuminate/console": "4.2.*"
+    },
+    "autoload": {
+        "classmap": [
+            "app/models",
+            "app/database/migrations",
+            "app/database/seeds"
+        ],
+        "psr-0": {
+            "": "app/controllers"
+        },
+        "psr-4": {
+            "Bootstrap\\": "bootstrap/"
+        }
+    }
+}

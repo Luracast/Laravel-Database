@@ -1,0 +1,34 @@
+#!/usr/bin/env php
+<?php
+date_default_timezone_set('UTC');
+
+set_time_limit(0);
+
+include_once __DIR__ . '/bootstrap/autoload.php';
+include_once __DIR__ . '/bootstrap/start.php';
+
+use Bootstrap\Console\Application;
+
+/*
+|--------------------------------------------------------------------------
+| Set up the Artisan Application
+|--------------------------------------------------------------------------
+*/
+
+$artisan = Application::start();
+
+/*
+|--------------------------------------------------------------------------
+| Run The Artisan Application
+|--------------------------------------------------------------------------
+|
+| When we run the console application, the current CLI command will be
+| executed in this console and the response sent back to a terminal
+| or another output device for the developers. Here goes nothing!
+|
+*/
+
+$status = $artisan->run();
+
+
+exit($status);
