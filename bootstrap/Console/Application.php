@@ -3,7 +3,7 @@ namespace Bootstrap\Console;
 
 use Bootstrap\Container\Container;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Facade;
 
 class Application extends \Illuminate\Console\Application
 {
@@ -23,7 +23,7 @@ class Application extends \Illuminate\Console\Application
     public static function make()
     {
         /** @var Container $app */
-        $app = Schema::getFacadeApplication();
+        $app = Facade::getFacadeApplication();
         $console = with($console = new static('Laravel Database', '4.2.*'))
             ->setLaravel($app)
             ->setExceptionHandler($app['exception'])
