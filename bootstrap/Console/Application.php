@@ -24,6 +24,7 @@ class Application extends \Illuminate\Console\Application
     {
         /** @var Container $app */
         $app = Facade::getFacadeApplication();
+        /** @var Application $console */
         $console = with($console = new static('Laravel Database', '4.2.*'))
             ->setLaravel($app)
             ->setExceptionHandler($app['exception'])
@@ -31,6 +32,7 @@ class Application extends \Illuminate\Console\Application
 
         $app->instance('artisan', $console);
         static::registerServiceProviders($app);
+        $console->add(new AutoloadCommand());
         return $console;
     }
 
