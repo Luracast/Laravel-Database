@@ -16,8 +16,7 @@ define('BASE', dirname(__DIR__));
 require BASE . '/vendor/autoload.php';
 
 use Bootstrap\Container\Container;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Facade;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Events\Dispatcher;
 
@@ -32,8 +31,7 @@ $app['events'] = new Dispatcher($app);
 $app['app'] = $app;
 $app['config'] = $app;
 
-Schema::setFacadeApplication($app);
-DB::setFacadeApplication($app);
+Facade::setFacadeApplication($app);
 
 $app->singleton('db', function () use ($app) {
     $db = new Capsule($app);
