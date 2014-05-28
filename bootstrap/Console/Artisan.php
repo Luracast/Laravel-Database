@@ -5,7 +5,7 @@ use Bootstrap\Container\Container;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Facade;
 
-class Application extends \Illuminate\Console\Application
+class Artisan extends \Illuminate\Console\Application
 {
     /**
      * Create and boot a new Console application.
@@ -18,13 +18,13 @@ class Application extends \Illuminate\Console\Application
 
     /**
      * Create a new Console application.
-     * @return Application
+     * @return Artisan
      */
     public static function make()
     {
         /** @var Container $app */
         $app = Facade::getFacadeApplication();
-        /** @var Application $console */
+        /** @var Artisan $console */
         $console = with($console = new static('Laravel Database', '4.2.*'))
             ->setLaravel($app)
             ->setExceptionHandler($app['exception'])
@@ -37,7 +37,7 @@ class Application extends \Illuminate\Console\Application
         return $console;
     }
 
-    public static function registerServiceProviders($app)
+    protected static function registerServiceProviders($app)
     {
         $providers = $app['config.app']['providers'];
         foreach ($providers as $class) {
