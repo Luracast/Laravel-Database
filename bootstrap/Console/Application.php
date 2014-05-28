@@ -33,6 +33,7 @@ class Application extends \Illuminate\Console\Application
         $app->instance('artisan', $console);
         static::registerServiceProviders($app);
         $console->add(new AutoloadCommand());
+        $console->add(new ServeCommand());
         return $console;
     }
 
