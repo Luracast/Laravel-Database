@@ -49,6 +49,7 @@ class Artisan extends \Illuminate\Console\Application
             $console->add(new AutoloadCommand());
             $console->add(new ServeCommand());
             $console->add(new CommandMakeCommand($app['files']));
+            $console->add(new EnvironmentCommand());
             static::$instance = $console;
         }
         return static::$instance;
