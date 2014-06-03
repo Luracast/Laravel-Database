@@ -18,6 +18,8 @@ class Artisan extends \Illuminate\Console\Application
      */
     public static function start()
     {
+        if (static::$instance)
+            return static::$instance;
         return static::make()->boot();
     }
 
