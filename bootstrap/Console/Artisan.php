@@ -14,9 +14,12 @@ class Artisan extends \Illuminate\Console\Application
 
     /**
      * Create and boot a new Console application.
+     *
+     * @param null $app
+     *
      * @return Artisan
      */
-    public static function start()
+    public static function start($app = null)
     {
         if (static::$instance)
             return static::$instance;
@@ -25,9 +28,12 @@ class Artisan extends \Illuminate\Console\Application
 
     /**
      * Create a new Console application.
+     *
+     * @param null $app
+     *
      * @return Artisan
      */
-    public static function make()
+    public static function make($app = null)
     {
         if (!static::$instance) {
             /** @var Container $app */
