@@ -10,6 +10,20 @@ class AutoloadCommand extends Command
 
     protected function fire()
     {
-        $this->info(shell_exec('composer dump-autoload -o'));
+        $status = 0;
+        $output = array();
+        $composer = BASE . '/composer.phar';
+        if (is_readable($composer)) {
+            $composer = 'php ' . $composer;
+        } else {
+            $composer = 'composer';
+        }
+        exec("$composer dump-autoload -o", $output, $status);
+        if ($status) {
+            $this->error('composer not found');
+            $this->info(end($output));
+        } else {
+            $this->info(end($output));
+        }
     }
 } 
