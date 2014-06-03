@@ -23,6 +23,19 @@ $app->singleton('files', function () use ($app) {
 
 /*
 |--------------------------------------------------------------------------
+| Handle Errors as Exceptions
+|--------------------------------------------------------------------------
+|
+| Here we are converting errors as exceptions so that they are handled well
+|
+*/
+
+set_error_handler(function ($err_no, $err_str, $err_file, $err_line ) {
+    throw new ErrorException($err_str, 0, $err_no, $err_file, $err_line);
+});
+
+/*
+|--------------------------------------------------------------------------
 | Bind Paths
 |--------------------------------------------------------------------------
 |
