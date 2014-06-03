@@ -18,12 +18,13 @@ class AutoloadCommand extends Command
         } else {
             $composer = 'composer';
         }
-        exec("$composer dump-autoload -o", $output, $status);
+        $message = exec("$composer dump-autoload -o", $output, $status);
         if ($status) {
             $this->error('composer not found');
-            $this->info(end($output));
+            $this->info($message);
+            exit(100);
         } else {
-            $this->info(end($output));
+            $this->info($message);
         }
     }
 } 
