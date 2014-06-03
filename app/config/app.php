@@ -30,7 +30,7 @@ return array(
 	*/
 
 	'aliases' => array(
-        'DB'                => 'Illuminate\Database\Capsule\Manager',
+		'DB'                => 'Illuminate\Database\Capsule\Manager',
 		'Eloquent'          => 'Illuminate\Database\Eloquent\Model',
 		'Schema'            => 'Illuminate\Support\Facades\Schema',
 		'Seeder'            => 'Illuminate\Database\Seeder',
