@@ -22,6 +22,26 @@ use Illuminate\Events\Dispatcher;
 
 $app = new Container();
 
+/*
+|--------------------------------------------------------------------------
+| Detect The Application Environment
+|--------------------------------------------------------------------------
+|
+| Laravel Database takes a dead simple approach to your application environments
+| so you can just specify a machine name for the host that matches a
+| given environment, then we will automatically detect it for you.
+|
+*/
+
+$env = $app->detectEnvironment(array(
+
+    'local' => array('your-machine-name'), //Aruls-MacBook-Pro-2.local
+
+));
+
+//load environment specific configuration
+
+
 $app['config.app'] = include BASE . '/app/config/app.php';
 $app['config.database'] = include BASE . '/app/config/database.php';
 $app['database.migrations'] = $app['config.database']['migrations'];
