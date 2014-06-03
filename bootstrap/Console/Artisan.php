@@ -42,6 +42,7 @@ class Artisan extends \Illuminate\Console\Application
             static::registerServiceProviders($app);
             $console->add(new AutoloadCommand());
             $console->add(new ServeCommand());
+            $console->add(new CommandMakeCommand($app['files']));
             static::$instance = $console;
         }
         return static::$instance;
