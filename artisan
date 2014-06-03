@@ -17,6 +17,9 @@ use Bootstrap\Console\Artisan;
 
 $artisan = Artisan::start();
 
+//load custom registered commands
+include BASE . '/app/start/artisan.php';
+
 /*
 |--------------------------------------------------------------------------
 | Run The Artisan Application
@@ -29,6 +32,5 @@ $artisan = Artisan::start();
 */
 
 $status = $artisan->run();
-
 
 exit($status);
