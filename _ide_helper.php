@@ -2798,5 +2798,538 @@ namespace {
 	}
 	class Seeder extends \Illuminate\Database\Seeder{
 	}
+
+    class Artisan extends \Illuminate\Support\Facades\Artisan{
+        /**
+         * Create and boot a new Console application.
+         *
+         * @param \Illuminate\Foundation\Application  $app
+         * @return \Illuminate\Console\Application
+         * @static
+         */
+        public static function start($app){
+            //Method inherited from \Illuminate\Console\Application
+            return \Illuminate\Console\Application::start($app);
+        }
+
+        /**
+         * Create a new Console application.
+         *
+         * @param \Illuminate\Foundation\Application  $app
+         * @return \Illuminate\Console\Application
+         * @static
+         */
+        public static function make($app){
+            //Method inherited from \Illuminate\Console\Application
+            return \Illuminate\Console\Application::make($app);
+        }
+
+        /**
+         * Boot the Console application.
+         *
+         * @return \Illuminate\Console\Application
+         * @static
+         */
+        public static function boot(){
+            //Method inherited from \Illuminate\Console\Application
+            return \Illuminate\Console\Application::boot();
+        }
+
+        /**
+         * Run an Artisan console command by name.
+         *
+         * @param string  $command
+         * @param array   $parameters
+         * @param \Symfony\Component\Console\Output\OutputInterface  $output
+         * @return void
+         * @static
+         */
+        public static function call($command, $parameters = array(), $output = null){
+            //Method inherited from \Illuminate\Console\Application
+            \Illuminate\Console\Application::call($command, $parameters, $output);
+        }
+
+        /**
+         * Add a command to the console.
+         *
+         * @param \Symfony\Component\Console\Command\Command  $command
+         * @return \Symfony\Component\Console\Command\Command
+         * @static
+         */
+        public static function add($command){
+            //Method inherited from \Illuminate\Console\Application
+            return \Illuminate\Console\Application::add($command);
+        }
+
+        /**
+         * Add a command, resolving through the application.
+         *
+         * @param string  $command
+         * @return \Symfony\Component\Console\Command\Command
+         * @static
+         */
+        public static function resolve($command){
+            //Method inherited from \Illuminate\Console\Application
+            return \Illuminate\Console\Application::resolve($command);
+        }
+
+        /**
+         * Resolve an array of commands through the application.
+         *
+         * @param array|dynamic  $commands
+         * @return void
+         * @static
+         */
+        public static function resolveCommands($commands){
+            //Method inherited from \Illuminate\Console\Application
+            \Illuminate\Console\Application::resolveCommands($commands);
+        }
+
+        /**
+         * Render the given exception.
+         *
+         * @param \Exception  $e
+         * @param \Symfony\Component\Console\Output\OutputInterface  $output
+         * @return void
+         * @static
+         */
+        public static function renderException($e, $output){
+            //Method inherited from \Illuminate\Console\Application
+            \Illuminate\Console\Application::renderException($e, $output);
+        }
+
+        /**
+         * Set the exception handler instance.
+         *
+         * @param \Illuminate\Exception\Handler  $handler
+         * @return \Illuminate\Console\Application
+         * @static
+         */
+        public static function setExceptionHandler($handler){
+            //Method inherited from \Illuminate\Console\Application
+            return \Illuminate\Console\Application::setExceptionHandler($handler);
+        }
+
+        /**
+         * Set the Laravel application instance.
+         *
+         * @param \Illuminate\Foundation\Application  $laravel
+         * @return \Illuminate\Console\Application
+         * @static
+         */
+        public static function setLaravel($laravel){
+            //Method inherited from \Illuminate\Console\Application
+            return \Illuminate\Console\Application::setLaravel($laravel);
+        }
+
+        /**
+         * Set whether the Console app should auto-exit when done.
+         *
+         * @param bool  $boolean
+         * @return \Illuminate\Console\Application
+         * @static
+         */
+        public static function setAutoExit($boolean){
+            //Method inherited from \Illuminate\Console\Application
+            return \Illuminate\Console\Application::setAutoExit($boolean);
+        }
+
+        /**
+         * Constructor.
+         *
+         * @param string $name    The name of the application
+         * @param string $version The version of the application
+         * @api
+         * @static
+         */
+        public static function __construct($name = 'UNKNOWN', $version = 'UNKNOWN'){
+            //Method inherited from \Symfony\Component\Console\Application
+            \Illuminate\Console\Application::__construct($name, $version);
+        }
+
+        /**
+         *
+         *
+         * @static
+         */
+        public static function setDispatcher($dispatcher){
+            //Method inherited from \Symfony\Component\Console\Application
+            \Illuminate\Console\Application::setDispatcher($dispatcher);
+        }
+
+        /**
+         * Runs the current application.
+         *
+         * @param InputInterface  $input  An Input instance
+         * @param OutputInterface $output An Output instance
+         * @return integer 0 if everything went fine, or an error code
+         * @throws \Exception When doRun returns Exception
+         * @api
+         * @static
+         */
+        public static function run($input = null, $output = null){
+            //Method inherited from \Symfony\Component\Console\Application
+            return \Illuminate\Console\Application::run($input, $output);
+        }
+
+        /**
+         * Runs the current application.
+         *
+         * @param InputInterface  $input  An Input instance
+         * @param OutputInterface $output An Output instance
+         * @return integer 0 if everything went fine, or an error code
+         * @static
+         */
+        public static function doRun($input, $output){
+            //Method inherited from \Symfony\Component\Console\Application
+            return \Illuminate\Console\Application::doRun($input, $output);
+        }
+
+        /**
+         * Set a helper set to be used with the command.
+         *
+         * @param HelperSet $helperSet The helper set
+         * @api
+         * @static
+         */
+        public static function setHelperSet($helperSet){
+            //Method inherited from \Symfony\Component\Console\Application
+            \Illuminate\Console\Application::setHelperSet($helperSet);
+        }
+
+        /**
+         * Get the helper set associated with the command.
+         *
+         * @return HelperSet The HelperSet instance associated with this command
+         * @api
+         * @static
+         */
+        public static function getHelperSet(){
+            //Method inherited from \Symfony\Component\Console\Application
+            return \Illuminate\Console\Application::getHelperSet();
+        }
+
+        /**
+         * Set an input definition set to be used with this application
+         *
+         * @param InputDefinition $definition The input definition
+         * @api
+         * @static
+         */
+        public static function setDefinition($definition){
+            //Method inherited from \Symfony\Component\Console\Application
+            \Illuminate\Console\Application::setDefinition($definition);
+        }
+
+        /**
+         * Gets the InputDefinition related to this Application.
+         *
+         * @return InputDefinition The InputDefinition instance
+         * @static
+         */
+        public static function getDefinition(){
+            //Method inherited from \Symfony\Component\Console\Application
+            return \Illuminate\Console\Application::getDefinition();
+        }
+
+        /**
+         * Gets the help message.
+         *
+         * @return string A help message.
+         * @static
+         */
+        public static function getHelp(){
+            //Method inherited from \Symfony\Component\Console\Application
+            return \Illuminate\Console\Application::getHelp();
+        }
+
+        /**
+         * Sets whether to catch exceptions or not during commands execution.
+         *
+         * @param Boolean $boolean Whether to catch exceptions or not during commands execution
+         * @api
+         * @static
+         */
+        public static function setCatchExceptions($boolean){
+            //Method inherited from \Symfony\Component\Console\Application
+            \Illuminate\Console\Application::setCatchExceptions($boolean);
+        }
+
+        /**
+         * Gets the name of the application.
+         *
+         * @return string The application name
+         * @api
+         * @static
+         */
+        public static function getName(){
+            //Method inherited from \Symfony\Component\Console\Application
+            return \Illuminate\Console\Application::getName();
+        }
+
+        /**
+         * Sets the application name.
+         *
+         * @param string $name The application name
+         * @api
+         * @static
+         */
+        public static function setName($name){
+            //Method inherited from \Symfony\Component\Console\Application
+            \Illuminate\Console\Application::setName($name);
+        }
+
+        /**
+         * Gets the application version.
+         *
+         * @return string The application version
+         * @api
+         * @static
+         */
+        public static function getVersion(){
+            //Method inherited from \Symfony\Component\Console\Application
+            return \Illuminate\Console\Application::getVersion();
+        }
+
+        /**
+         * Sets the application version.
+         *
+         * @param string $version The application version
+         * @api
+         * @static
+         */
+        public static function setVersion($version){
+            //Method inherited from \Symfony\Component\Console\Application
+            \Illuminate\Console\Application::setVersion($version);
+        }
+
+        /**
+         * Returns the long version of the application.
+         *
+         * @return string The long application version
+         * @api
+         * @static
+         */
+        public static function getLongVersion(){
+            //Method inherited from \Symfony\Component\Console\Application
+            return \Illuminate\Console\Application::getLongVersion();
+        }
+
+        /**
+         * Registers a new command.
+         *
+         * @param string $name The command name
+         * @return Command The newly created command
+         * @api
+         * @static
+         */
+        public static function register($name){
+            //Method inherited from \Symfony\Component\Console\Application
+            return \Illuminate\Console\Application::register($name);
+        }
+
+        /**
+         * Adds an array of command objects.
+         *
+         * @param Command[] $commands An array of commands
+         * @api
+         * @static
+         */
+        public static function addCommands($commands){
+            //Method inherited from \Symfony\Component\Console\Application
+            \Illuminate\Console\Application::addCommands($commands);
+        }
+
+        /**
+         * Returns a registered command by name or alias.
+         *
+         * @param string $name The command name or alias
+         * @return Command A Command object
+         * @throws \InvalidArgumentException When command name given does not exist
+         * @api
+         * @static
+         */
+        public static function get($name){
+            //Method inherited from \Symfony\Component\Console\Application
+            return \Illuminate\Console\Application::get($name);
+        }
+
+        /**
+         * Returns true if the command exists, false otherwise.
+         *
+         * @param string $name The command name or alias
+         * @return Boolean true if the command exists, false otherwise
+         * @api
+         * @static
+         */
+        public static function has($name){
+            //Method inherited from \Symfony\Component\Console\Application
+            return \Illuminate\Console\Application::has($name);
+        }
+
+        /**
+         * Returns an array of all unique namespaces used by currently registered commands.
+         *
+         * It does not returns the global namespace which always exists.
+         *
+         * @return array An array of namespaces
+         * @static
+         */
+        public static function getNamespaces(){
+            //Method inherited from \Symfony\Component\Console\Application
+            return \Illuminate\Console\Application::getNamespaces();
+        }
+
+        /**
+         * Finds a registered namespace by a name or an abbreviation.
+         *
+         * @param string $namespace A namespace or abbreviation to search for
+         * @return string A registered namespace
+         * @throws \InvalidArgumentException When namespace is incorrect or ambiguous
+         * @static
+         */
+        public static function findNamespace($namespace){
+            //Method inherited from \Symfony\Component\Console\Application
+            return \Illuminate\Console\Application::findNamespace($namespace);
+        }
+
+        /**
+         * Finds a command by name or alias.
+         *
+         * Contrary to get, this command tries to find the best
+         * match if you give it an abbreviation of a name or alias.
+         *
+         * @param string $name A command name or a command alias
+         * @return Command A Command instance
+         * @throws \InvalidArgumentException When command name is incorrect or ambiguous
+         * @api
+         * @static
+         */
+        public static function find($name){
+            //Method inherited from \Symfony\Component\Console\Application
+            return \Illuminate\Console\Application::find($name);
+        }
+
+        /**
+         * Gets the commands (registered in the given namespace if provided).
+         *
+         * The array keys are the full names and the values the command instances.
+         *
+         * @param string $namespace A namespace name
+         * @return Command[] An array of Command instances
+         * @api
+         * @static
+         */
+        public static function all($namespace = null){
+            //Method inherited from \Symfony\Component\Console\Application
+            return \Illuminate\Console\Application::all($namespace);
+        }
+
+        /**
+         * Returns an array of possible abbreviations given a set of names.
+         *
+         * @param array $names An array of names
+         * @return array An array of abbreviations
+         * @static
+         */
+        public static function getAbbreviations($names){
+            //Method inherited from \Symfony\Component\Console\Application
+            return \Illuminate\Console\Application::getAbbreviations($names);
+        }
+
+        /**
+         * Returns a text representation of the Application.
+         *
+         * @param string  $namespace An optional namespace name
+         * @param boolean $raw       Whether to return raw command list
+         * @return string A string representing the Application
+         * @deprecated Deprecated since version 2.3, to be removed in 3.0.
+         * @static
+         */
+        public static function asText($namespace = null, $raw = false){
+            //Method inherited from \Symfony\Component\Console\Application
+            return \Illuminate\Console\Application::asText($namespace, $raw);
+        }
+
+        /**
+         * Returns an XML representation of the Application.
+         *
+         * @param string  $namespace An optional namespace name
+         * @param Boolean $asDom     Whether to return a DOM or an XML string
+         * @return string|\DOMDocument An XML string representing the Application
+         * @deprecated Deprecated since version 2.3, to be removed in 3.0.
+         * @static
+         */
+        public static function asXml($namespace = null, $asDom = false){
+            //Method inherited from \Symfony\Component\Console\Application
+            return \Illuminate\Console\Application::asXml($namespace, $asDom);
+        }
+
+        /**
+         * Tries to figure out the terminal dimensions based on the current environment
+         *
+         * @return array Array containing width and height
+         * @static
+         */
+        public static function getTerminalDimensions(){
+            //Method inherited from \Symfony\Component\Console\Application
+            return \Illuminate\Console\Application::getTerminalDimensions();
+        }
+
+        /**
+         * Sets terminal dimensions.
+         *
+         * Can be useful to force terminal dimensions for functional tests.
+         *
+         * @param integer $width  The width
+         * @param integer $height The height
+         * @return Application The current application
+         * @static
+         */
+        public static function setTerminalDimensions($width, $height){
+            //Method inherited from \Symfony\Component\Console\Application
+            return \Illuminate\Console\Application::setTerminalDimensions($width, $height);
+        }
+
+        /**
+         * Returns the namespace part of the command name.
+         *
+         * This method is not part of public API and should not be used directly.
+         *
+         * @param string $name  The full name of the command
+         * @param string $limit The maximum number of parts of the namespace
+         * @return string The namespace of the command
+         * @static
+         */
+        public static function extractNamespace($name, $limit = null){
+            //Method inherited from \Symfony\Component\Console\Application
+            return \Illuminate\Console\Application::extractNamespace($name, $limit);
+        }
+
+        /**
+         * Sets the default Command name.
+         *
+         * @param string $commandName The Command name
+         * @static
+         */
+        public static function setDefaultCommand($commandName){
+            //Method inherited from \Symfony\Component\Console\Application
+            \Illuminate\Console\Application::setDefaultCommand($commandName);
+        }
+
+        /**
+         * Dynamically pass all missing methods to console Artisan.
+         *
+         * @param string  $method
+         * @param array   $parameters
+         * @return mixed
+         * @static
+         */
+        public static function __call($method, $parameters){
+            //Method inherited from \Illuminate\Foundation\Artisan
+            return \Illuminate\Foundation\Artisan::__call($method, $parameters);
+        }
+
+    }
 }
 
