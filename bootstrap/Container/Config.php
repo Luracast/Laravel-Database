@@ -7,13 +7,16 @@ class Config implements ArrayAccess
     protected $container = array();
     /** @var  string */
     protected $path;
+    /** @var  string */
+    protected $environment;
 
     /** @var  static */
     protected static $instance;
 
-    public function __construct($path)
+    public function __construct($path, $environment = null)
     {
         $this->path = $path;
+        $this->environment = $environment;
         if (!static::$instance) {
             static::$instance = $this;
         }
@@ -22,23 +25,28 @@ class Config implements ArrayAccess
     /**
      * Initialize the Config instance for a specific target path
      *
-     * @param string $path folder path for the config files
+     * @param string      $path        folder path for the config files
+     *
+     * @param string|null $environment path for fine tuning config files for your location
      *
      * @return Config
      */
-    public static function init($path)
+    public static function init($path, $environment = null)
     {
         if (!static::$instance)
-            static::$instance = new Config($path);
-        elseif (static::$instance->path !== $path)
+            static::$instance = new Config($path, $environment);
+        elseif (static::$instance->path !== $path || static::$instance->environment !== $environment) {
             static::$instance->path = $path;
+            static::$instance->environment = $environment;
+            static::$instance->container = array();
+        }
         return static::$instance;
     }
 
     public static function get($name)
     {
         if (!static::$instance)
-            throw new \BadFunctionCallException('Config::init($path) needs to be called first');
+            throw new \BadFunctionCallException('Config::init($path, $environment) should to be called first');
         return static::$instance->offsetGet($name);
     }
 
@@ -60,7 +68,11 @@ class Config implements ArrayAccess
             } else {
                 //lazy load the config file
                 if (is_readable("$this->path/$name.php")) {
+                    //merge environment file if available
                     $this->container[$name] = include "$this->path/$name.php";
+                    if (!empty($this->environment) && is_readable($file = "$this->path/$this->environment/$name.php")) {
+                        $this->container[$name] = array_replace_recursive($this->container[$name], (include $file));
+                    }
                     return $this->offsetExists($offset);
                 }
             }

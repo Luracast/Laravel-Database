@@ -40,7 +40,7 @@ $env = $app->detectEnvironment(array(
 
 ));
 
-$config = Config::init(BASE . '/app/config');
+$config = Config::init(BASE . '/app/config', $env);
 
 /*
 //load environment specific configuration
