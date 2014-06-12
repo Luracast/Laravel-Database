@@ -19,6 +19,7 @@ use Bootstrap\Container\Application;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Events\Dispatcher;
+use Bootstrap\Container\Config;
 
 $app = new Application();
 
@@ -39,6 +40,9 @@ $env = $app->detectEnvironment(array(
 
 ));
 
+$config = Config::init(BASE . '/app/config');
+
+/*
 //load environment specific configuration
 
 if (is_readable($file = BASE . '/app/config/' . $app['env'] . '/app.php')) {
@@ -54,17 +58,18 @@ if (is_readable($file = BASE . '/app/config/' . $app['env'] . '/database.php')) 
 }
 
 $app['database.migrations'] = $app['config.database']['migrations'];
+*/
 
 $app['events'] = new Dispatcher($app);
 
 $app['app'] = $app;
-$app['config'] = $app;
+$app->instance('config', $config);
 
 Facade::setFacadeApplication($app);
 
-$app->singleton('db', function () use ($app) {
+$app->singleton('db', function () use ($app, $config) {
     $db = new Capsule($app);
-    $db->addConnection($app['config.database']['connections'][$app['config.database']['default']]);
+    $db->addConnection($config['database.connections'][$config['database']['default']]);
     $db->setEventDispatcher($app['events']);
     $db->setAsGlobal();
     $db->bootEloquent();
@@ -82,9 +87,9 @@ $app->singleton('db', function () use ($app) {
 */
 
 spl_autoload_register(function ($className) use ($app) {
-    if (isset($app['config.app']['aliases'][$className])) {
+    if (isset($app['config']['app.aliases'][$className])) {
         $app['db']; //lazy initialization of DB
-        return class_alias($app['config.app']['aliases'][$className], $className);
+        return class_alias($app['config']['app.aliases'][$className], $className);
     }
     return false;
 }, true, true);

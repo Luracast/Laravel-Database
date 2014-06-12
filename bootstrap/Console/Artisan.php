@@ -59,7 +59,7 @@ class Artisan extends \Illuminate\Console\Application
 
     protected static function registerServiceProviders($app)
     {
-        $providers = $app['config.app']['providers'];
+        $providers = $app['config']['app.providers'];
         foreach ($providers as $class) {
             /** @var ServiceProvider $instance */
             $instance = new $class($app);
