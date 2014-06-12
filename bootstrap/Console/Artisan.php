@@ -1,7 +1,7 @@
 <?php
 namespace Bootstrap\Console;
 
-use Bootstrap\Container\Container;
+use Bootstrap\Container\Application;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Facade;
 
@@ -36,7 +36,7 @@ class Artisan extends \Illuminate\Console\Application
     public static function make($app = null)
     {
         if (!static::$instance) {
-            /** @var Container $app */
+            /** @var Application $app */
             $app = Facade::getFacadeApplication();
             /** @var Artisan $console */
             $console = with($console = new static('Laravel Database', '4.2.*'))

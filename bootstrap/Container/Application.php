@@ -1,7 +1,7 @@
 <?php
 namespace Bootstrap\Container;
 
-class Container extends \Illuminate\Container\Container
+class Application extends \Illuminate\Container\Container
 {
     /**
      * Detect the application's current environment.

@@ -15,12 +15,12 @@ define('BASE', dirname(__DIR__));
 
 require BASE . '/vendor/autoload.php';
 
-use Bootstrap\Container\Container;
+use Bootstrap\Container\Application;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Events\Dispatcher;
 
-$app = new Container();
+$app = new Application();
 
 /*
 |--------------------------------------------------------------------------
