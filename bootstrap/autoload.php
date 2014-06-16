@@ -42,24 +42,6 @@ $env = $app->detectEnvironment(array(
 
 $config = Config::init(BASE . '/app/config', $env);
 
-/*
-//load environment specific configuration
-
-if (is_readable($file = BASE . '/app/config/' . $app['env'] . '/app.php')) {
-    $app['config.app'] = (include $file) + (include BASE . '/app/config/app.php');
-} else {
-    $app['config.app'] = include BASE . '/app/config/app.php';
-}
-
-if (is_readable($file = BASE . '/app/config/' . $app['env'] . '/database.php')) {
-    $app['config.database'] = (include $file) + (include BASE . '/app/config/database.php');
-} else {
-    $app['config.database'] = include BASE . '/app/config/database.php';
-}
-
-$app['database.migrations'] = $app['config.database']['migrations'];
-*/
-
 $app['events'] = new Dispatcher($app);
 
 $app['app'] = $app;
@@ -68,8 +50,9 @@ $app->instance('config', $config);
 Facade::setFacadeApplication($app);
 
 $app->singleton('db', function () use ($app, $config) {
+    $default = $config['database.default'];
     $db = new Capsule($app);
-    $db->addConnection($config['database.connections'][$config['database']['default']]);
+    $db->addConnection($config['database.connections'][$default]);
     $db->setEventDispatcher($app['events']);
     $db->setAsGlobal();
     $db->bootEloquent();
