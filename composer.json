@@ -16,7 +16,8 @@
     },
     "require-dev": {
         "illuminate/filesystem": "4.2.*",
-        "illuminate/console": "4.2.*"
+        "illuminate/console": "4.2.*",
+        "d11wtq/boris": "~1.0"
     },
     "autoload": {
         "classmap": [

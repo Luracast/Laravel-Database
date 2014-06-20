@@ -2,6 +2,7 @@
 namespace Bootstrap\Container;
 
 use Illuminate\Container\Container;
+use Closure;
 
 class Application extends Container
 {
@@ -78,5 +79,16 @@ class Application extends Container
         foreach (array_except($paths, array('app')) as $key => $value) {
             $this->instance("path.{$key}", realpath($value));
         }
+    }
+
+    /**
+     * Register an application error handler.
+     *
+     * @param  Closure  $callback
+     * @return void
+     */
+    public function error(Closure $callback)
+    {
+        $this['exception']->error($callback);
     }
 } 
