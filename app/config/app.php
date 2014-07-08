@@ -36,6 +36,7 @@ return array(
 		'Seeder'            => 'Illuminate\Database\Seeder',
 		'SoftDeletingTrait' => 'Illuminate\Database\Eloquent\SoftDeletingTrait',
 		'Artisan'           => 'Bootstrap\Console\ArtisanFacade',
+		'Config'            => 'Bootstrap\Container\Config',
 	),
 
 );
