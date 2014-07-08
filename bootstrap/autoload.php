@@ -51,7 +51,10 @@ Facade::setFacadeApplication($app);
 
 $app->singleton('db', function () use ($app, $config) {
     $default = $config['database.default'];
+    $fetch = $config['database.fetch'];
     $db = new Capsule($app);
+    $config['database.fetch'] = $fetch;
+    $config['database.default'] = $default;
     $db->addConnection($config['database.connections'][$default]);
     $db->setEventDispatcher($app['events']);
     $db->setAsGlobal();
