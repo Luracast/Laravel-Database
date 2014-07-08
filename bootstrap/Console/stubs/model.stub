@@ -1,20 +1,37 @@
 <?php
 
-class {{class}} extends Eloquent
+class class:name extends Eloquent
 {
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = table:timestamps;
 
-	/**
+    /**
      * The database table used by the model.
      *
      * @var string
      */
-	protected $table = 'table:name';
+    protected $table = 'table:name';
 
-	/**
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [ //TODO: edit fillable
+        table:fillable
+    ];
+
+    /**
      * The attributes excluded from the model's JSON form.
      *
      * @var array
      */
-    protected $hidden = array();
+    protected $hidden = [
+        table:hidden
+    ];
 
 }

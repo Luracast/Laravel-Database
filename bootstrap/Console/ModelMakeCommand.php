@@ -2,9 +2,9 @@
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
+use Schema;
 
 class ModelMakeCommand extends Command
 {
@@ -86,13 +86,39 @@ class ModelMakeCommand extends Command
      */
     protected function formatStub($stub)
     {
-        $name = $this->input->getArgument('name');
-        $stub = str_replace('{{class}}', $name, $stub);
-
-        $table = is_null($this->option('table'))
-            ? str_plural(strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $name)))
+        $className = $this->input->getArgument('name');
+        $tableName = is_null($this->option('table'))
+            ? str_plural(strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $className)))
             : $this->option('table');
-        $stub = str_replace('table:name', $table, $stub);
+        $fields = Schema::getColumnListing($tableName);
+
+        $hide = ['password', 'secret'];
+        $avoid = ['id', 'verified', 'active'];
+
+        $timestamps = 'true';
+        $fillable = '';
+        $hidden = '';
+
+        if (!empty($fields)) {
+            $timestamps = in_array('created_at', $fields) ? 'true' : 'false';
+            $fields = array_diff($fields, $avoid);
+            $hide = array_intersect($fields, $hide);
+        }
+
+        if (!empty($fields)) {
+            $timestamps = in_array('created_at', $fields) ? 'true' : 'false';
+            $fillable = "'" . implode("',\n        '", $fields) . "'";
+        }
+
+        if (!empty($hide)) {
+            $hidden = "'" . implode("',\n        '", $hide) . "'";
+        }
+
+        $stub = str_replace(
+            ['class:name', 'table:name', 'table:timestamps', 'table:fillable', 'table:hidden'],
+            [$className, $tableName, $timestamps, $fillable, $hidden],
+            $stub
+        );
 
         return $stub;
     }
@@ -138,5 +164,4 @@ class ModelMakeCommand extends Command
             array('path', null, InputOption::VALUE_OPTIONAL, 'The path where the command should be stored.', null),
         );
     }
-
 }
