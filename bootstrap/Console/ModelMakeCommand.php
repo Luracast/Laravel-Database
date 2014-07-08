@@ -28,7 +28,7 @@ class ModelMakeCommand extends Command
      *
      * @param  \Illuminate\Filesystem\Filesystem $files
      *
-     * @return void
+     * @return \Bootstrap\Console\ModelMakeCommand
      */
     public function __construct(Filesystem $files)
     {
@@ -90,7 +90,7 @@ class ModelMakeCommand extends Command
         $stub = str_replace('{{class}}', $name, $stub);
 
         $table = is_null($this->option('table'))
-            ? str_plural(strtolower($name))
+            ? str_plural(strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $name)))
             : $this->option('table');
         $stub = str_replace('table:name', $table, $stub);
 
