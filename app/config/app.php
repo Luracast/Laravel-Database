@@ -37,6 +37,9 @@ return array(
 		'SoftDeletingTrait' => 'Illuminate\Database\Eloquent\SoftDeletingTrait',
 		'Artisan'           => 'Bootstrap\Console\ArtisanFacade',
 		'Config'            => 'Bootstrap\Container\Config',
+		'Cache'             => 'Illuminate\Support\Facades\Cache',
+		'File'              => 'Illuminate\Support\Facades\File',
+		'Event'             => 'Illuminate\Support\Facades\Event',
 	),
 
 );

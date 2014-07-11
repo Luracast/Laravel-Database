@@ -16,10 +16,13 @@ define('BASE', dirname(__DIR__));
 require BASE . '/vendor/autoload.php';
 
 use Bootstrap\Container\Application;
+use Bootstrap\Container\Config;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Events\Dispatcher;
-use Bootstrap\Container\Config;
+use Illuminate\Cache\CacheManager;
+use Illuminate\Filesystem\Filesystem;
+
 
 $app = new Application();
 
@@ -36,20 +39,29 @@ $app = new Application();
 
 $env = $app->detectEnvironment(array(
 
-    'local' => array('your-machine-name'), //Aruls-MacBook-Pro-2.local
+    'local' => array('your-machine-name'),
 
 ));
 
-$config = Config::init(BASE . '/app/config', $env);
-
-$app['events'] = new Dispatcher($app);
-
 $app['app'] = $app;
-$app->instance('config', $config);
-
 Facade::setFacadeApplication($app);
 
-$app->singleton('db', function () use ($app, $config) {
+$app->instance('config', new Config(BASE . '/app/config', $env));
+
+$app->singleton('events', function () use ($app) {
+    return new Dispatcher($app);
+});
+
+$app->singleton('files', function () use ($app) {
+    return new Filesystem();
+});
+
+$app->singleton('cache', function () use ($app) {
+    return new CacheManager($app);
+});
+
+$app->singleton('db', function () use ($app) {
+    $config = $app['config'];
     $default = $config['database.default'];
     $fetch = $config['database.fetch'];
     $db = new Capsule($app);

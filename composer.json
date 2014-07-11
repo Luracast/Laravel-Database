@@ -12,10 +12,11 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "illuminate/database": "4.2.*"
+        "illuminate/database": "4.2.*",
+        "illuminate/cache": "4.2.*",
+        "illuminate/filesystem": "4.2.*"
     },
     "require-dev": {
-        "illuminate/filesystem": "4.2.*",
         "illuminate/console": "4.2.*",
         "d11wtq/boris": "~1.0"
     },

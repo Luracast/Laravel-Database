@@ -1,7 +1,6 @@
 <?php
 
 use Bootstrap\Console\ExceptionHandler;
-use Illuminate\Filesystem\Filesystem;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,11 +13,6 @@ use Illuminate\Filesystem\Filesystem;
 
 $app->singleton('exception', function () use ($app) {
     return new ExceptionHandler();
-});
-
-$app->singleton('files', function () use ($app) {
-    $files = new Filesystem();
-    return $files;
 });
 
 /*
