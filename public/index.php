@@ -32,9 +32,10 @@ require __DIR__.'/../bootstrap/autoload.php';
 */
 
 /*
+use Luracast\Restler\Restler;
 $r = new Restler();
-$r->addApiClass('Users')
- */
+$r->addApiClass('Users');
+*/
 
 /*
 |--------------------------------------------------------------------------
