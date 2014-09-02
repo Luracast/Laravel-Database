@@ -27,7 +27,10 @@ require __DIR__.'/../bootstrap/autoload.php';
 |
 | Configure your favourite web app framework to handle web requests and
 | respond back. If you are using Restler framework, you may simply uncomment
-| the lines below
+| the code below and run the following command from the command line on the
+| project root folder
+|
+|    composer require restler/framework
 |
 */
 
