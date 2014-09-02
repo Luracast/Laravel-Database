@@ -36,7 +36,7 @@ return array(
 		'Seeder'            => 'Illuminate\Database\Seeder',
 		'SoftDeletingTrait' => 'Illuminate\Database\Eloquent\SoftDeletingTrait',
 		'Artisan'           => 'Bootstrap\Console\ArtisanFacade',
-		'Config'            => 'Bootstrap\Container\Config',
+		'Config'            => 'Luracast\Config\Config',
 		'Cache'             => 'Illuminate\Support\Facades\Cache',
 		'File'              => 'Illuminate\Support\Facades\File',
 		'Event'             => 'Illuminate\Support\Facades\Event',
