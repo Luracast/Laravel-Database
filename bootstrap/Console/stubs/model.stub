@@ -1,7 +1,13 @@
 <?php
 
+softdelete:import
+
 class class:name extends Eloquent
 {
+    softdelete:use
+
+    softdelete:dates
+
     /**
      * Indicates if the model should be timestamped.
      *

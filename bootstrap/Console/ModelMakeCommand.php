@@ -53,7 +53,7 @@ class ModelMakeCommand extends Command
         // will correspond to what the actual file should be stored as on storage.
         $file = $path . '/' . $this->input->getArgument('name') . '.php';
 
-        $this->writeCommand($file, $stub);
+        $this->writeModel($file, $stub);
 
         $this->call('dump-autoload');
     }
@@ -66,7 +66,7 @@ class ModelMakeCommand extends Command
      *
      * @return void
      */
-    protected function writeCommand($file, $stub)
+    protected function writeModel($file, $stub)
     {
         if (!file_exists($file)) {
             $this->files->put($file, $this->formatStub($stub));
@@ -98,16 +98,22 @@ class ModelMakeCommand extends Command
         $timestamps = 'true';
         $fillable = '';
         $hidden = '';
+        $import = '';
+        $use = '';
+        $dates = '';
 
         if (!empty($fields)) {
             $timestamps = in_array('created_at', $fields) ? 'true' : 'false';
             $fields = array_diff($fields, $avoid);
             $hide = array_intersect($fields, $hide);
-        }
 
-        if (!empty($fields)) {
-            $timestamps = in_array('created_at', $fields) ? 'true' : 'false';
             $fillable = "'" . implode("',\n        '", $fields) . "'";
+
+            if(in_array('deleted_at', $fields)){
+                $import = 'use Illuminate\Database\Eloquent\SoftDeletingTrait;';
+                $use = 'use SoftDeletingTrait;';
+                $dates = 'protected $dates = [\'deleted_at\'];';
+            }
         }
 
         if (!empty($hide)) {
@@ -115,8 +121,10 @@ class ModelMakeCommand extends Command
         }
 
         $stub = str_replace(
-            ['class:name', 'table:name', 'table:timestamps', 'table:fillable', 'table:hidden'],
-            [$className, $tableName, $timestamps, $fillable, $hidden],
+            ['class:name', 'table:name', 'table:timestamps', 'table:fillable', 'table:hidden',
+                'softdelete:import', 'softdelete:use', 'softdelete:dates'],
+            [$className, $tableName, $timestamps, $fillable, $hidden,
+                $import, $use, $dates],
             $stub
         );
 
@@ -161,7 +169,7 @@ class ModelMakeCommand extends Command
     {
         return array(
             array('table', null, InputOption::VALUE_OPTIONAL, 'The table to be associated with the model.', null),
-            array('path', null, InputOption::VALUE_OPTIONAL, 'The path where the command should be stored.', null),
+            array('path', null, InputOption::VALUE_OPTIONAL, 'The path where the model should be stored.', null),
         );
     }
 }
