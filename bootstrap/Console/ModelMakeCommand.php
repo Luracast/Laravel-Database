@@ -110,9 +110,8 @@ class ModelMakeCommand extends Command
             $fillable = "'" . implode("',\n        '", $fields) . "'";
 
             if(in_array('deleted_at', $fields)){
-                $import = 'use Illuminate\Database\Eloquent\SoftDeletingTrait;';
-                $use = 'use SoftDeletingTrait;';
-                $dates = 'protected $dates = [\'deleted_at\'];';
+                $import = "use Illuminate\Database\Eloquent\SoftDeletingTrait;\n";
+                $use = "use SoftDeletingTrait;\n        protected $dates = ['deleted_at'];\n        ";
             }
         }
 
@@ -122,9 +121,9 @@ class ModelMakeCommand extends Command
 
         $stub = str_replace(
             ['class:name', 'table:name', 'table:timestamps', 'table:fillable', 'table:hidden',
-                'softdelete:import', 'softdelete:use', 'softdelete:dates'],
+                'softdelete:import', 'softdelete:use'],
             [$className, $tableName, $timestamps, $fillable, $hidden,
-                $import, $use, $dates],
+                $import, $use],
             $stub
         );
 
