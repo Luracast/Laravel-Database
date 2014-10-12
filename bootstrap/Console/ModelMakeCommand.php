@@ -95,7 +95,7 @@ class ModelMakeCommand extends Command
         $fields = Schema::getColumnListing($tableName);
 
         $hide = ['password', 'secret'];
-        $avoid = ['id', 'verified', 'active'];
+        $avoid = ['id', 'ID', 'verified', 'active'];
 
         $timestamps = 'true';
         $fillable = '';
@@ -107,11 +107,17 @@ class ModelMakeCommand extends Command
         $properties = '';
         if (!empty($fields)) {
             foreach ($fields as $property) {
+                if ($isDate = ends_with($property, '_at')) {
+                    $avoid[] = $property;
+                }
+                if ($is_id = ends_with($property, '_id')) {
+                    $avoid[] = $property;
+                }
                 //$type = DB::connection()->getDoctrineColumn($tableName, $property)->getType()->getName();
                 list($type, $subType) = $this->guessType($property);
                 $pt = in_array($property, $hide)
                     ? '@property-write' : (
-                    in_array($property, $avoid) || ends_with($property, '_at') ? '@property-read ' : '@property      '
+                    in_array($property, $avoid) || $isDate ? '@property-read ' : '@property      '
                     );
                 $properties .= "$pt $type \${$property}$subType\n * ";
             }
