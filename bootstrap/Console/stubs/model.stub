@@ -1,11 +1,11 @@
 <?php
 
-/**
+softdelete:import/**
  * Class class:name
  *
  * comment:properties
  */
-softdelete:importclass class:name extends Eloquent
+class class:name extends Eloquent
 {
     softdelete:use
     /**
