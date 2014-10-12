@@ -109,7 +109,11 @@ class ModelMakeCommand extends Command
             foreach ($fields as $property) {
                 //$type = DB::connection()->getDoctrineColumn($tableName, $property)->getType()->getName();
                 list($type, $subType) = $this->guessType($property);
-                $properties .= "@property $type \$$property$subType\n * ";
+                $pt = in_array($property, $hide)
+                    ? '@property-write' : (
+                    in_array($property, $avoid) || ends_with($property, '_at') ? '@property-read ' : '@property      '
+                    );
+                $properties .= "$pt $type \${$property}$subType\n * ";
             }
 
             $timestamps = in_array('created_at', $fields) ? 'true' : 'false';
