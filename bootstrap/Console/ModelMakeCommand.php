@@ -5,6 +5,7 @@ use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Schema;
+use DB;
 
 class ModelMakeCommand extends Command
 {
@@ -68,12 +69,13 @@ class ModelMakeCommand extends Command
      */
     protected function writeModel($file, $stub)
     {
-        if (!file_exists($file)) {
+        $write = true;
+        if (file_exists($file)) {
+            $write = $this->confirm("Model already exist, are you sure you want to overwrite?", false);
+        }
+        if ($write) {
             $this->files->put($file, $this->formatStub($stub));
-
             $this->info('Model created successfully.');
-        } else {
-            $this->error('Model already exists!');
         }
     }
 
@@ -102,16 +104,23 @@ class ModelMakeCommand extends Command
         $use = '';
         $dates = '';
 
+        $properties = '';
         if (!empty($fields)) {
+            foreach ($fields as $property) {
+                //$type = DB::connection()->getDoctrineColumn($tableName, $property)->getType()->getName();
+                list($type, $subType) = $this->guessType($property);
+                $properties .= "@property $type \$$property$subType\n * ";
+            }
+
             $timestamps = in_array('created_at', $fields) ? 'true' : 'false';
             $fields = array_diff($fields, $avoid);
             $hide = array_intersect($fields, $hide);
 
             $fillable = "'" . implode("',\n        '", $fields) . "'";
 
-            if(in_array('deleted_at', $fields)){
-                $import = "use Illuminate\Database\Eloquent\SoftDeletingTrait;\n";
-                $use = "use SoftDeletingTrait;\n        protected $dates = ['deleted_at'];\n        ";
+            if (in_array('deleted_at', $fields)) {
+                $import = "use Illuminate\\Database\\Eloquent\\SoftDeletingTrait;\n\n";
+                $use = "use SoftDeletingTrait;\n\n    protected \$dates = ['deleted_at'];\n        ";
             }
         }
 
@@ -120,10 +129,26 @@ class ModelMakeCommand extends Command
         }
 
         $stub = str_replace(
-            ['class:name', 'table:name', 'table:timestamps', 'table:fillable', 'table:hidden',
-                'softdelete:import', 'softdelete:use'],
-            [$className, $tableName, $timestamps, $fillable, $hidden,
-                $import, $use],
+            [
+                'class:name',
+                'table:name',
+                'table:timestamps',
+                'table:fillable',
+                'table:hidden',
+                'softdelete:import',
+                'softdelete:use',
+                'comment:properties'
+            ],
+            [
+                $className,
+                $tableName,
+                $timestamps,
+                $fillable,
+                $hidden,
+                $import,
+                $use,
+                $properties
+            ],
             $stub
         );
 
@@ -170,5 +195,22 @@ class ModelMakeCommand extends Command
             array('table', null, InputOption::VALUE_OPTIONAL, 'The table to be associated with the model.', null),
             array('path', null, InputOption::VALUE_OPTIONAL, 'The path where the model should be stored.', null),
         );
+    }
+
+    protected function guessType($name)
+    {
+        $subtype = '';
+        $type = 'string';
+        if (ends_with($name, '_at')) {
+            //date field
+            $subtype = ' {@type date}';
+        } elseif (ends_with($name, ['id', 'ID'])) {
+            //int
+            $type = 'int   ';
+        } else {
+            //assume string
+        }
+
+        return [$type, $subtype];
     }
 }

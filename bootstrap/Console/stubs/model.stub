@@ -1,8 +1,14 @@
 <?php
 
+/**
+ * Class class:name
+ *
+ * comment:properties
+ */
 softdelete:importclass class:name extends Eloquent
 {
-    softdelete:use/**
+    softdelete:use
+    /**
      * Indicates if the model should be timestamped.
      *
      * @var bool
