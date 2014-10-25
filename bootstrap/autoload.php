@@ -91,3 +91,16 @@ spl_autoload_register(function ($className) use ($app) {
     }
     return false;
 }, true, true);
+
+/*
+|--------------------------------------------------------------------------
+| Bind Paths
+|--------------------------------------------------------------------------
+|
+| Here we are binding the paths configured in paths.php to the app. You
+| should not be changing these here. If you need to change these you
+| may do so within the paths.php file and they will be bound here.
+|
+*/
+
+$app->bindInstallPaths(require __DIR__ . '/paths.php');

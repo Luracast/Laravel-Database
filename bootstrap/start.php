@@ -7,7 +7,7 @@ use Bootstrap\Console\ExceptionHandler;
 | Bind Needed Properties
 |--------------------------------------------------------------------------
 |
-| Here we are binding the exception handler and file system
+| Here we are binding the exception handler
 |
 */
 
@@ -27,19 +27,6 @@ $app->singleton('exception', function () use ($app) {
 set_error_handler(function ($err_no, $err_str, $err_file, $err_line ) {
     throw new ErrorException($err_str, 0, $err_no, $err_file, $err_line);
 });
-
-/*
-|--------------------------------------------------------------------------
-| Bind Paths
-|--------------------------------------------------------------------------
-|
-| Here we are binding the paths configured in paths.php to the app. You
-| should not be changing these here. If you need to change these you
-| may do so within the paths.php file and they will be bound here.
-|
-*/
-
-$app->bindInstallPaths(require __DIR__ . '/paths.php');
 
 /*
 |--------------------------------------------------------------------------
