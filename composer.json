@@ -4,6 +4,7 @@
     "keywords": ["laravel", "database", "sql", "orm"],
     "minimum-stability": "dev",
     "license": "MIT",
+    "type": "project",
     "authors": [
         {
             "name": "Arul Kumaran",
