@@ -32,16 +32,18 @@ $app = new Application();
 |--------------------------------------------------------------------------
 |
 | Laravel Database takes a dead simple approach to your application environments
-| so you can just specify a machine name for the host that matches a
-| given environment, then we will automatically detect it for you.
+| so you can create a .env file from .env.example and specify environment under
+| APP_ENV otherwise production is assumed
 |
 */
+if (file_exists(BASE . '/.env')) {
+    Dotenv::load(BASE);
+}
 
-$env = $app->detectEnvironment(array(
-
-    'local' => array('your-machine-name'),
-
-));
+$env = $app->detectEnvironment(function()
+{
+    return getenv('APP_ENV') ?: 'production';
+});
 
 $app['app'] = $app;
 Facade::setFacadeApplication($app);
