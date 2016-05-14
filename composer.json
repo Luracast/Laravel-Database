@@ -1,6 +1,6 @@
 {
     "name": "laravel/database",
-    "description": "Get Laravel 4.2.x database for your non laravel projects. Built on top of illuminate/database to provide migration, seeding and artisan support",
+    "description": "Get Laravel 5.2.x database for your non laravel projects. Built on top of illuminate/database to provide migration, seeding and artisan support",
     "keywords": ["laravel", "database", "sql", "orm"],
     "minimum-stability": "dev",
     "license": "MIT",
@@ -14,6 +14,7 @@
     "require": {
         "php": ">=5.5.9",
         "illuminate/database": "5.2.*",
+        "illuminate/events": "5.2.*",
         "illuminate/cache": "5.2.*",
         "illuminate/filesystem": "5.2.*",
         "luracast/config": "1.*",
@@ -21,7 +22,7 @@
     },
     "require-dev": {
         "illuminate/console": "5.2.*",
-        "d11wtq/boris": "~1.0"
+        "psy/psysh": "0.7.*"
     },
     "suggest": {
         "doctrine/dbal": "Allow renaming columns and dropping SQLite columns."
