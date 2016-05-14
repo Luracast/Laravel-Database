@@ -12,15 +12,15 @@
         }
     ],
     "require": {
-        "php": ">=5.4.0",
-        "illuminate/database": "4.2.*",
-        "illuminate/cache": "4.2.*",
-        "illuminate/filesystem": "4.2.*",
+        "php": ">=5.5.9",
+        "illuminate/database": "5.2.*",
+        "illuminate/cache": "5.2.*",
+        "illuminate/filesystem": "5.2.*",
         "luracast/config": "1.*",
         "vlucas/phpdotenv": "~1.0"
     },
     "require-dev": {
-        "illuminate/console": "4.2.*",
+        "illuminate/console": "5.2.*",
         "d11wtq/boris": "~1.0"
     },
     "suggest": {
