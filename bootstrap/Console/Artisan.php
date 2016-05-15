@@ -7,6 +7,8 @@ use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Facade;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 class Artisan extends \Illuminate\Console\Application
 {
@@ -27,6 +29,7 @@ class Artisan extends \Illuminate\Console\Application
     {
         parent::__construct($laravel, $events, $version);
         $this->setName('Laravel Database');
+        $this->setCatchExceptions(true);
     }
 
     /**
