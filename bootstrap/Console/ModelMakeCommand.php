@@ -15,7 +15,7 @@ class ModelMakeCommand extends Command
      *
      * @var string
      */
-    protected $name = 'model:make';
+    protected $name = 'make:model';
 
     /**
      * The console command description.
