@@ -6,6 +6,101 @@ use Closure;
 
 class Application extends Container
 {
+
+    /**
+     * The base path of the application installation.
+     *
+     * @var string
+     */
+    protected $basePath;
+
+    /**
+     * Create a new Lumen application instance.
+     *
+     * @param  string|null $basePath
+     * @return void
+     */
+    public function __construct($basePath = null)
+    {
+        $this->basePath = $basePath;
+        $this->bootstrapContainer();
+        //$this->registerErrorHandling();
+    }
+
+    /**
+     * Get the path to the application "app" directory.
+     *
+     * @return string
+     */
+    public function path()
+    {
+        return $this->basePath . DIRECTORY_SEPARATOR . 'app';
+    }
+
+    /**
+     * Get the base path for the application.
+     *
+     * @param  string|null $path
+     * @return string
+     */
+    public function basePath($path = null)
+    {
+        if (isset($this->basePath)) {
+            return $this->basePath . ($path ? '/' . $path : $path);
+        }
+        if ($this->runningInConsole()) {
+            $this->basePath = getcwd();
+        } else {
+            $this->basePath = realpath(getcwd() . '/../');
+        }
+
+        return $this->basePath($path);
+    }
+
+    /**
+     * Get the database path for the application.
+     *
+     * @return string
+     */
+    public function databasePath()
+    {
+        return $this->basePath() . '/app/database';
+    }
+
+    /**
+     * Get the storage path for the application.
+     *
+     * @param  string|null $path
+     * @return string
+     */
+    public function storagePath($path = null)
+    {
+        return $this->basePath() . 'app/storage' . ($path ? '/' . $path : $path);
+    }
+
+
+    /**
+     * Bootstrap the application container.
+     *
+     * @return void
+     */
+    protected function bootstrapContainer()
+    {
+        static::setInstance($this);
+        $this->instance('app', $this);
+        $this->instance('path', $this->path());
+    }
+
+    /**
+     * Determine if the application is running in the console.
+     *
+     * @return bool
+     */
+    public function runningInConsole()
+    {
+        return php_sapi_name() == 'cli';
+    }
+
     /**
      * Detect the application's current environment.
      *
@@ -40,6 +135,7 @@ class Application extends Container
                 return $this['env'] = $environments;
             }
         }
+
         return $this['env'] = 'production';
     }
 
@@ -76,7 +172,7 @@ class Application extends Container
         // Here we will bind the install paths into the container as strings that can be
         // accessed from any point in the system. Each path key is prefixed with path
         // so that they have the consistent naming convention inside the container.
-        foreach (array_except($paths, array('app')) as $key => $value) {
+        foreach (array_except($paths, ['app']) as $key => $value) {
             $this->instance("path.{$key}", realpath($value));
         }
     }
@@ -84,7 +180,7 @@ class Application extends Container
     /**
      * Register an application error handler.
      *
-     * @param  Closure  $callback
+     * @param  Closure $callback
      * @return void
      */
     public function error(Closure $callback)
