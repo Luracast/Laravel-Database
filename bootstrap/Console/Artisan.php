@@ -3,6 +3,8 @@ namespace Bootstrap\Console;
 
 use Bootstrap\Container\Application;
 use Illuminate\Console\Events\ArtisanStarting;
+use Illuminate\Contracts\Container\Container;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Facade;
 
@@ -12,6 +14,20 @@ class Artisan extends \Illuminate\Console\Application
      * @var Artisan
      */
     private static $instance;
+
+    /**
+     * Create a new Artisan console application.
+     *
+     * @param  \Illuminate\Contracts\Container\Container $laravel
+     * @param  \Illuminate\Contracts\Events\Dispatcher $events
+     * @param  string $version
+     * @return void
+     */
+    public function __construct(Container $laravel, Dispatcher $events, $version)
+    {
+        parent::__construct($laravel, $events, $version);
+        $this->setName('Laravel Database');
+    }
 
     /**
      * Create and boot a new Console application.
@@ -24,6 +40,7 @@ class Artisan extends \Illuminate\Console\Application
     {
         if (static::$instance)
             return static::$instance;
+
         return static::make();
     }
 
@@ -46,7 +63,7 @@ class Artisan extends \Illuminate\Console\Application
 
             $app->instance('artisan', $console);
             static::registerServiceProviders($app);
-            $console->add(new AutoloadCommand());
+            $console->add(new AutoloadCommand($app['composer']));
             $console->add(new ServeCommand());
             $console->add(new ModelMakeCommand($app['files']));
             $console->add(new CommandMakeCommand($app['files']));
@@ -55,6 +72,7 @@ class Artisan extends \Illuminate\Console\Application
             $app['events']->fire(new ArtisanStarting($console));
             static::$instance = $console;
         }
+
         return static::$instance;
     }
 
