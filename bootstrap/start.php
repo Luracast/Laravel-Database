@@ -1,6 +1,7 @@
 <?php
 
 use Bootstrap\Console\ExceptionHandler;
+use Illuminate\Support\Composer;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,6 +16,11 @@ $app->singleton('exception', function () use ($app) {
     return new ExceptionHandler();
 });
 
+
+$app->singleton('composer', function ($app) {
+    return new Composer($app['files'], __DIR__ . '/..');
+});
+
 /*
 |--------------------------------------------------------------------------
 | Handle Errors as Exceptions
@@ -24,7 +30,7 @@ $app->singleton('exception', function () use ($app) {
 |
 */
 
-set_error_handler(function ($err_no, $err_str, $err_file, $err_line ) {
+set_error_handler(function ($err_no, $err_str, $err_file, $err_line) {
     throw new ErrorException($err_str, 0, $err_no, $err_file, $err_line);
 });
 

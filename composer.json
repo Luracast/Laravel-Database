@@ -22,7 +22,8 @@
     },
     "require-dev": {
         "illuminate/console": "5.2.*",
-        "psy/psysh": "0.7.*"
+        "psy/psysh": "0.7.*",
+        "symfony/process": "3.0.*"
     },
     "suggest": {
         "doctrine/dbal": "Allow renaming columns and dropping SQLite columns."
