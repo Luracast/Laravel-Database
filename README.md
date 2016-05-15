@@ -3,7 +3,7 @@
 Provides full laravel database functionality for your non laravel projects adds Migration, Seeding and Artisan support to Illuminate Database.
 
 
-[Laravel](https://github.com/laravel/laravel) is a web application framework with expressive, elegant syntax. We extracted the database funtionality from it and made it available for other frameworks
+[Laravel](https://github.com/laravel/laravel) is a web application framework with expressive, elegant syntax. We extracted the database functionality from it and made it available for other frameworks
 
 The [Illuminate Database](https://github.com/illuminate/database) component is a full database toolkit for PHP, providing an expressive query builder, ActiveRecord style ORM, and schema builder. It currently supports MySQL, Postgres, SQL Server, and SQLite. We combined it with Illuminate FileSystem and Illuminate Console to make Artisan work with database related commands.
 
@@ -23,9 +23,13 @@ Install Laravel Database by issuing the Composer create-project command in your 
 
 From your public `index.php` include the `autoload.php` in `bootstrap` folder this internally uses composer autoloader. This enabled lazy loading of all db related classes. Only when you call one of the DB related class, database engine is initialized.
 
+Even when using version `5.2.*` the folder structure will be the same as `4.2.*`
+
 ## Official Documentation
 
 Documentation for the entire framework can be found on the [Laravel website](http://laravel.com/docs). Refer to all database related sections from there.
+
+> Note:- For folder structure refer to version 4.2 of the documentation, for everything else refer to the version corresponding to the version you use here
 
 
 ### Credits
