@@ -8,10 +8,10 @@ class AutoloadCommand extends Command
     protected $name = 'dump-autoload';
     protected $description = 'Regenerate composer autoload files';
 
-    protected function fire()
+    public function fire()
     {
         $status = 0;
-        $output = array();
+        $output = [];
         $composer = BASE . '/composer.phar';
         if (is_readable($composer)) {
             $composer = 'php ' . $composer;
@@ -20,7 +20,7 @@ class AutoloadCommand extends Command
         }
         $message = exec("$composer dump-autoload -o", $output, $status);
         if ($status) {
-            $this->error('composer not found');
+            $this->error('Unable to dump-autoload. composer not found');
             $this->info($message);
             exit(100);
         } else {
