@@ -42,7 +42,7 @@ class AutoloadCommand extends Command {
      */
     public function fire()
     {
-        //$this->call('optimize');
+        $this->composer->dumpOptimized();
         foreach ($this->findWorkbenches() as $workbench)
         {
             $this->comment("Running for workbench [{$workbench['name']}]...");
