@@ -2,6 +2,7 @@
 namespace Bootstrap\Console;
 
 use Bootstrap\Container\Application;
+use Illuminate\Console\Events\ArtisanStarting;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Facade;
 
@@ -50,6 +51,8 @@ class Artisan extends \Illuminate\Console\Application
             $console->add(new ModelMakeCommand($app['files']));
             $console->add(new CommandMakeCommand($app['files']));
             $console->add(new EnvironmentCommand());
+
+            $app['events']->fire(new ArtisanStarting($console));
             static::$instance = $console;
         }
         return static::$instance;
