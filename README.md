@@ -21,9 +21,15 @@ Install Laravel Database by issuing the Composer create-project command in your 
 
 ## Usage Instructions
 
-From your public `index.php` include the `autoload.php` in `bootstrap` folder this internally uses composer autoloader. This enabled lazy loading of all db related classes. Only when you call one of the DB related class, database engine is initialized.
+From your public `index.php` include the `autoload.php` in `bootstrap` folder this internally uses composer autoloader. 
+This enables lazy loading of all db related classes. Only when you call one of the DB related class, database engine is initialized.
 
 Even when using version `5.2.*` the folder structure will be the same as `4.2.*`
+
+## Adding More Components
+
+For instructions on how to add more laravel components or compatible third party service providers etc., read the comments
+in `app/config/app.php` file
 
 ## Official Documentation
 

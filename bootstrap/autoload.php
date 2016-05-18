@@ -77,7 +77,7 @@ $app->singleton('db', function () use ($app) {
     return $db->getDatabaseManager();
 });
 
-$app->singleton('redis', function ($app) {
+$app->singleton('redis', function () use ($app) {
     return new \Illuminate\Redis\Database($app['config']['database.redis']);
 });
 
