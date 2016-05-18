@@ -3331,5 +3331,563 @@ namespace {
         }
 
     }
+
+	class Cache extends \Illuminate\Support\Facades\Cache{
+
+		/**
+		 * Get a cache store instance by name.
+		 *
+		 * @param string|null $name
+		 * @return mixed
+		 * @static
+		 */
+		public static function store($name = null){
+			return \Illuminate\Cache\CacheManager::store($name);
+		}
+
+		/**
+		 * Get a cache driver instance.
+		 *
+		 * @param string $driver
+		 * @return mixed
+		 * @static
+		 */
+		public static function driver($driver = null){
+			return \Illuminate\Cache\CacheManager::driver($driver);
+		}
+
+		/**
+		 * Create a new cache repository with the given implementation.
+		 *
+		 * @param \Illuminate\Contracts\Cache\Store $store
+		 * @return \Illuminate\Cache\Repository
+		 * @static
+		 */
+		public static function repository($store){
+			return \Illuminate\Cache\CacheManager::repository($store);
+		}
+
+		/**
+		 * Get the default cache driver name.
+		 *
+		 * @return string
+		 * @static
+		 */
+		public static function getDefaultDriver(){
+			return \Illuminate\Cache\CacheManager::getDefaultDriver();
+		}
+
+		/**
+		 * Set the default cache driver name.
+		 *
+		 * @param string $name
+		 * @return void
+		 * @static
+		 */
+		public static function setDefaultDriver($name){
+			\Illuminate\Cache\CacheManager::setDefaultDriver($name);
+		}
+
+		/**
+		 * Register a custom driver creator Closure.
+		 *
+		 * @param string $driver
+		 * @param \Closure $callback
+		 * @return $this
+		 * @static
+		 */
+		public static function extend($driver, $callback){
+			return \Illuminate\Cache\CacheManager::extend($driver, $callback);
+		}
+
+		/**
+		 * Set the event dispatcher instance.
+		 *
+		 * @param \Illuminate\Contracts\Events\Dispatcher $events
+		 * @return void
+		 * @static
+		 */
+		public static function setEventDispatcher($events){
+			\Illuminate\Cache\Repository::setEventDispatcher($events);
+		}
+
+		/**
+		 * Determine if an item exists in the cache.
+		 *
+		 * @param string $key
+		 * @return bool
+		 * @static
+		 */
+		public static function has($key){
+			return \Illuminate\Cache\Repository::has($key);
+		}
+
+		/**
+		 * Retrieve an item from the cache by key.
+		 *
+		 * @param string $key
+		 * @param mixed $default
+		 * @return mixed
+		 * @static
+		 */
+		public static function get($key, $default = null){
+			return \Illuminate\Cache\Repository::get($key, $default);
+		}
+
+		/**
+		 * Retrieve an item from the cache and delete it.
+		 *
+		 * @param string $key
+		 * @param mixed $default
+		 * @return mixed
+		 * @static
+		 */
+		public static function pull($key, $default = null){
+			return \Illuminate\Cache\Repository::pull($key, $default);
+		}
+
+		/**
+		 * Store an item in the cache.
+		 *
+		 * @param string $key
+		 * @param mixed $value
+		 * @param \DateTime|int $minutes
+		 * @return void
+		 * @static
+		 */
+		public static function put($key, $value, $minutes){
+			\Illuminate\Cache\Repository::put($key, $value, $minutes);
+		}
+
+		/**
+		 * Store an item in the cache if the key does not exist.
+		 *
+		 * @param string $key
+		 * @param mixed $value
+		 * @param \DateTime|int $minutes
+		 * @return bool
+		 * @static
+		 */
+		public static function add($key, $value, $minutes){
+			return \Illuminate\Cache\Repository::add($key, $value, $minutes);
+		}
+
+		/**
+		 * Store an item in the cache indefinitely.
+		 *
+		 * @param string $key
+		 * @param mixed $value
+		 * @return void
+		 * @static
+		 */
+		public static function forever($key, $value){
+			\Illuminate\Cache\Repository::forever($key, $value);
+		}
+
+		/**
+		 * Get an item from the cache, or store the default value.
+		 *
+		 * @param string $key
+		 * @param \DateTime|int $minutes
+		 * @param \Closure $callback
+		 * @return mixed
+		 * @static
+		 */
+		public static function remember($key, $minutes, $callback){
+			return \Illuminate\Cache\Repository::remember($key, $minutes, $callback);
+		}
+
+		/**
+		 * Get an item from the cache, or store the default value forever.
+		 *
+		 * @param string $key
+		 * @param \Closure $callback
+		 * @return mixed
+		 * @static
+		 */
+		public static function sear($key, $callback){
+			return \Illuminate\Cache\Repository::sear($key, $callback);
+		}
+
+		/**
+		 * Get an item from the cache, or store the default value forever.
+		 *
+		 * @param string $key
+		 * @param \Closure $callback
+		 * @return mixed
+		 * @static
+		 */
+		public static function rememberForever($key, $callback){
+			return \Illuminate\Cache\Repository::rememberForever($key, $callback);
+		}
+
+		/**
+		 * Remove an item from the cache.
+		 *
+		 * @param string $key
+		 * @return bool
+		 * @static
+		 */
+		public static function forget($key){
+			return \Illuminate\Cache\Repository::forget($key);
+		}
+
+		/**
+		 * Begin executing a new tags operation if the store supports it.
+		 *
+		 * @param string $name
+		 * @return \Illuminate\Cache\TaggedCache
+		 * @deprecated since version 5.1. Use tags instead.
+		 * @static
+		 */
+		public static function section($name){
+			return \Illuminate\Cache\Repository::section($name);
+		}
+
+		/**
+		 * Begin executing a new tags operation if the store supports it.
+		 *
+		 * @param array|mixed $names
+		 * @return \Illuminate\Cache\TaggedCache
+		 * @throws \BadMethodCallException
+		 * @static
+		 */
+		public static function tags($names){
+			return \Illuminate\Cache\Repository::tags($names);
+		}
+
+		/**
+		 * Get the default cache time.
+		 *
+		 * @return int
+		 * @static
+		 */
+		public static function getDefaultCacheTime(){
+			return \Illuminate\Cache\Repository::getDefaultCacheTime();
+		}
+
+		/**
+		 * Set the default cache time in minutes.
+		 *
+		 * @param int $minutes
+		 * @return void
+		 * @static
+		 */
+		public static function setDefaultCacheTime($minutes){
+			\Illuminate\Cache\Repository::setDefaultCacheTime($minutes);
+		}
+
+		/**
+		 * Get the cache store implementation.
+		 *
+		 * @return \Illuminate\Contracts\Cache\Store
+		 * @static
+		 */
+		public static function getStore(){
+			return \Illuminate\Cache\Repository::getStore();
+		}
+
+		/**
+		 * Determine if a cached value exists.
+		 *
+		 * @param string $key
+		 * @return bool
+		 * @static
+		 */
+		public static function offsetExists($key){
+			return \Illuminate\Cache\Repository::offsetExists($key);
+		}
+
+		/**
+		 * Retrieve an item from the cache by key.
+		 *
+		 * @param string $key
+		 * @return mixed
+		 * @static
+		 */
+		public static function offsetGet($key){
+			return \Illuminate\Cache\Repository::offsetGet($key);
+		}
+
+		/**
+		 * Store an item in the cache for the default time.
+		 *
+		 * @param string $key
+		 * @param mixed $value
+		 * @return void
+		 * @static
+		 */
+		public static function offsetSet($key, $value){
+			\Illuminate\Cache\Repository::offsetSet($key, $value);
+		}
+
+		/**
+		 * Remove an item from the cache.
+		 *
+		 * @param string $key
+		 * @return void
+		 * @static
+		 */
+		public static function offsetUnset($key){
+			\Illuminate\Cache\Repository::offsetUnset($key);
+		}
+
+		/**
+		 * Register a custom macro.
+		 *
+		 * @param string $name
+		 * @param callable $macro
+		 * @return void
+		 * @static
+		 */
+		public static function macro($name, $macro){
+			\Illuminate\Cache\Repository::macro($name, $macro);
+		}
+
+		/**
+		 * Checks if macro is registered.
+		 *
+		 * @param string $name
+		 * @return bool
+		 * @static
+		 */
+		public static function hasMacro($name){
+			return \Illuminate\Cache\Repository::hasMacro($name);
+		}
+
+		/**
+		 * Dynamically handle calls to the class.
+		 *
+		 * @param string $method
+		 * @param array $parameters
+		 * @return mixed
+		 * @throws \BadMethodCallException
+		 * @static
+		 */
+		public static function macroCall($method, $parameters){
+			return \Illuminate\Cache\Repository::macroCall($method, $parameters);
+		}
+
+		/**
+		 * Increment the value of an item in the cache.
+		 *
+		 * @param string $key
+		 * @param mixed $value
+		 * @return int
+		 * @static
+		 */
+		public static function increment($key, $value = 1){
+			return \Illuminate\Cache\FileStore::increment($key, $value);
+		}
+
+		/**
+		 * Decrement the value of an item in the cache.
+		 *
+		 * @param string $key
+		 * @param mixed $value
+		 * @return int
+		 * @static
+		 */
+		public static function decrement($key, $value = 1){
+			return \Illuminate\Cache\FileStore::decrement($key, $value);
+		}
+
+		/**
+		 * Remove all items from the cache.
+		 *
+		 * @return void
+		 * @static
+		 */
+		public static function flush(){
+			\Illuminate\Cache\FileStore::flush();
+		}
+
+		/**
+		 * Get the Filesystem instance.
+		 *
+		 * @return \Illuminate\Filesystem\Filesystem
+		 * @static
+		 */
+		public static function getFilesystem(){
+			return \Illuminate\Cache\FileStore::getFilesystem();
+		}
+
+		/**
+		 * Get the working directory of the cache.
+		 *
+		 * @return string
+		 * @static
+		 */
+		public static function getDirectory(){
+			return \Illuminate\Cache\FileStore::getDirectory();
+		}
+
+		/**
+		 * Get the cache key prefix.
+		 *
+		 * @return string
+		 * @static
+		 */
+		public static function getPrefix(){
+			return \Illuminate\Cache\FileStore::getPrefix();
+		}
+
+	}
+
+	class Redis extends Illuminate\Support\Facades\Redis{
+		/**
+		 * @var \Illuminate\Redis\Database $root
+		 */
+		static private $root;
+		/**
+		 * Create a new Redis connection instance.
+		 *
+		 * @static
+		 * @param	string	$host
+		 * @param	int	$port
+		 * @param	int	$database
+		 * @param	string	$password
+		 */
+		public static function __construct($host, $port, $database = 0, $password = null){
+			self::$root->__construct($host, $port, $database, $password);
+		}
+		/**
+		 * Connect to the Redis database.
+		 *
+		 * @static
+		 */
+		public static function connect(){
+			self::$root->connect();
+		}
+		/**
+		 * Run a command against the Redis database.
+		 *
+		 * @static
+		 * @param	string	$method
+		 * @param	array	$parameters
+		 * @return mixed
+		 */
+		public static function command($method, $parameters = array()){
+			return self::$root->command($method, $parameters);
+		}
+		/**
+		 * Build the Redis command syntax.
+		 * Redis protocol states that a command should conform to the following format:
+		 * *<number of arguments> CR LF
+		 * $<number of bytes of argument 1> CR LF
+		 * <argument data> CR LF
+		 * ...
+		 * $<number of bytes of argument N> CR LF
+		 * <argument data> CR LF
+		 * More information regarding the Redis protocol: http://redis.io/topics/protocol
+		 *
+		 * @static
+		 * @param	string	$method
+		 * @param	array	$parameters
+		 * @return string
+		 */
+		public static function buildCommand($method, $parameters){
+			return self::$root->buildCommand($method, $parameters);
+		}
+		/**
+		 * Parse the Redis database response.
+		 *
+		 * @static
+		 * @param	string	$response
+		 * @return mixed
+		 */
+		public static function parseResponse($response){
+			return self::$root->parseResponse($response);
+		}
+		/**
+		 * Read the specified number of bytes from the file resource.
+		 *
+		 * @static
+		 * @param	int	$bytes
+		 * @return string
+		 */
+		public static function fileRead($bytes){
+			return self::$root->fileRead($bytes);
+		}
+		/**
+		 * Get the specified number of bytes from a file line.
+		 *
+		 * @static
+		 * @param	int	$bytes
+		 * @return string
+		 */
+		public static function fileGet($bytes){
+			return self::$root->fileGet($bytes);
+		}
+		/**
+		 * Write the given command to the file resource.
+		 *
+		 * @static
+		 * @param	string	$command
+		 */
+		public static function fileWrite($command){
+			self::$root->fileWrite($command);
+		}
+		/**
+		 * Get the Redis socket connection.
+		 *
+		 * @static
+		 * @return resource
+		 */
+		public static function getConnection(){
+			return self::$root->getConnection();
+		}
+		/**
+		 * Dynamically make a Redis command.
+		 *
+		 * @static
+		 * @param	string	$method
+		 * @param	array	$parameters
+		 * @return mixed
+		 */
+		public static function __call($method, $parameters){
+			return self::$root->__call($method, $parameters);
+		}
+	}
+
+	class Queue extends Illuminate\Support\Facades\Queue{
+		/**
+		 * @var \Illuminate\Queue\QueueInterface $root
+		 */
+		static private $root;
+		/**
+		 * Push a new job onto the queue.
+		 *
+		 * @static
+		 * @param	string	$job
+		 * @param	mixed	$data
+		 * @param	string	$queue
+		 */
+		public static function push($job, $data = '', $queue = null){
+			self::$root->push($job, $data, $queue);
+		}
+		/**
+		 * Push a new job onto the queue after a delay.
+		 *
+		 * @static
+		 * @param	int	$delay
+		 * @param	string	$job
+		 * @param	mixed	$data
+		 * @param	string	$queue
+		 */
+		public static function later($delay, $job, $data = '', $queue = null){
+			self::$root->later($delay, $job, $data, $queue);
+		}
+		/**
+		 * Pop the next job off of the queue.
+		 *
+		 * @static
+		 * @param	string	$queue
+		 * @return \Illuminate\Queue\Jobs\Job|nul
+		 */
+		public static function pop($queue = null){
+			return self::$root->pop($queue);
+		}
+	}
 }
 
