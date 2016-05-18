@@ -86,6 +86,9 @@ class Artisan extends \Illuminate\Console\Application
         foreach ($providers as $class) {
             /** @var ServiceProvider $instance */
             $instance = new $class($app);
+            if (method_exists($instance, 'boot')){
+                $instance->boot();
+            }
             $instance->register();
         }
     }
