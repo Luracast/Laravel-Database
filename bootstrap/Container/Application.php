@@ -7,6 +7,8 @@ use Closure;
 class Application extends Container
 {
 
+    const VERSION = 5.2;
+    
     /**
      * The base path of the application installation.
      *
