@@ -77,6 +77,10 @@ $app->singleton('db', function () use ($app) {
     return $db->getDatabaseManager();
 });
 
+$app->singleton('redis', function ($app) {
+    return new \Illuminate\Redis\Database($app['config']['database.redis']);
+});
+
 /*
 |--------------------------------------------------------------------------
 | Register The Aliased Auto Loader
