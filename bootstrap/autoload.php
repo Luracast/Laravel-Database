@@ -25,6 +25,92 @@ use Illuminate\Support\Str;
 use Luracast\Config\Config;
 
 
+/*
+|--------------------------------------------------------------------------
+| Some of the commonly expected functions
+|--------------------------------------------------------------------------
+*/
+
+if (!function_exists('app')) {
+    /**
+     * Get the available container instance.
+     *
+     * @param  string $make
+     * @param  array  $parameters
+     *
+     * @return mixed|Application
+     */
+    function app($make = null, $parameters = [])
+    {
+        if (is_null($make)) {
+            return Application::getInstance();
+        }
+
+        return Application::getInstance()->make($make, $parameters);
+    }
+}
+
+if (!function_exists('env')) {
+    /**
+     * Gets the value of an environment variable. Supports boolean, empty and null.
+     *
+     * @param  string $key
+     * @param  mixed  $default
+     *
+     * @return mixed
+     */
+    function env($key, $default = null)
+    {
+        $value = getenv($key);
+        if ($value === false) {
+            return value($default);
+        }
+        switch (strtolower($value)) {
+            case 'true':
+            case '(true)':
+                return true;
+            case 'false':
+            case '(false)':
+                return false;
+            case 'empty':
+            case '(empty)':
+                return '';
+            case 'null':
+            case '(null)':
+                return;
+        }
+        if (strlen($value) > 1 && Str::startsWith($value, '"') && Str::endsWith($value, '"')) {
+            return substr($value, 1, -1);
+        }
+
+        return $value;
+    }
+}
+
+if (!function_exists('storage_path')) {
+    /**
+     * Get the path to the storage folder.
+     *
+     * @param  string $path
+     *
+     * @return string
+     */
+    function storage_path($path = '')
+    {
+        return app('path.storage') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+    }
+}
+
+
+if (!function_exists('config_path')) {
+
+    function config_path($path = '')
+    {
+        return BASE . '/app/config' . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+    }
+}
+
+
 $app = new Application();
 
 /*
@@ -112,88 +198,3 @@ spl_autoload_register(function ($className) use ($app) {
 */
 
 $app->bindInstallPaths(require __DIR__ . '/paths.php');
-
-/*
-|--------------------------------------------------------------------------
-| Some of the commonly expected functions
-|--------------------------------------------------------------------------
-*/
-
-if (!function_exists('app')) {
-    /**
-     * Get the available container instance.
-     *
-     * @param  string $make
-     * @param  array  $parameters
-     *
-     * @return mixed|Application
-     */
-    function app($make = null, $parameters = [])
-    {
-        if (is_null($make)) {
-            return Application::getInstance();
-        }
-
-        return Application::getInstance()->make($make, $parameters);
-    }
-}
-
-if (!function_exists('env')) {
-    /**
-     * Gets the value of an environment variable. Supports boolean, empty and null.
-     *
-     * @param  string $key
-     * @param  mixed  $default
-     *
-     * @return mixed
-     */
-    function env($key, $default = null)
-    {
-        $value = getenv($key);
-        if ($value === false) {
-            return value($default);
-        }
-        switch (strtolower($value)) {
-            case 'true':
-            case '(true)':
-                return true;
-            case 'false':
-            case '(false)':
-                return false;
-            case 'empty':
-            case '(empty)':
-                return '';
-            case 'null':
-            case '(null)':
-                return;
-        }
-        if (strlen($value) > 1 && Str::startsWith($value, '"') && Str::endsWith($value, '"')) {
-            return substr($value, 1, -1);
-        }
-
-        return $value;
-    }
-}
-
-if (!function_exists('storage_path')) {
-    /**
-     * Get the path to the storage folder.
-     *
-     * @param  string $path
-     *
-     * @return string
-     */
-    function storage_path($path = '')
-    {
-        return app('path.storage') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
-    }
-}
-
-
-if (!function_exists('config_path')) {
-
-    function config_path($path = '')
-    {
-        return BASE . '/app/config' . ($path ? DIRECTORY_SEPARATOR . $path : $path);
-    }
-}
