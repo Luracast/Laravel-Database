@@ -110,6 +110,14 @@ if (!function_exists('config_path')) {
     }
 }
 
+if (!function_exists('config_path')) {
+
+    function config_path($path = '')
+    {
+        return BASE . '/app/config' . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+    }
+}
+
 
 $app = new Application();
 
