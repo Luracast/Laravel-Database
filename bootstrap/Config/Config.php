@@ -64,13 +64,6 @@ class Config implements ArrayAccess, ConfigContract
         return static::$instance;
     }
 
-    public static function getStatic($name)
-    {
-        if (!static::$instance)
-            throw new \BadFunctionCallException('Config::init($path, $environment) should to be called first');
-        return static::$instance->offsetGet($name);
-    }
-
     public function offsetExists($offset)
     {
         if (isset($this->container[$offset])) {
@@ -189,18 +182,6 @@ class Config implements ArrayAccess, ConfigContract
     public function push($key, $value)
     {
         $this->container = $this->container + [$key => $value];
-    }
-
-
-    public static function __callStatic($name, $arguments) {
-
-        if (!static::$instance) {
-            throw new \BadFunctionCallException('Config::init($path, $environment) should to be called first');
-        }
-
-        if (method_exists(static::$instance, $name)) {
-            return call_user_func_array([static::$instance, $name], $arguments);
-        }
     }
 
 }
