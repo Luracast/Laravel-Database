@@ -15,6 +15,7 @@ define('BASE', dirname(__DIR__));
 
 require BASE . '/vendor/autoload.php';
 
+use Bootstrap\Config\Config;
 use Bootstrap\Container\Application;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Facade;
@@ -23,7 +24,6 @@ use Illuminate\Events\Dispatcher;
 use Illuminate\Cache\CacheManager;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
-use Luracast\Config\Config;
 
 
 /*
