@@ -60,7 +60,7 @@ class Artisan extends \Illuminate\Console\Application
             /** @var Application $app */
             $app = Facade::getFacadeApplication();
             /** @var Artisan $console */
-            with($console = new static($app, $app['events'], '5.2.*'))
+            with($console = new static($app, $app['events'], '5.8.*'))
                 //->setExceptionHandler($app['exception'])
                 ->setAutoExit(false);
 
@@ -73,7 +73,7 @@ class Artisan extends \Illuminate\Console\Application
             $console->add(new EnvironmentCommand());
             $console->add(new VendorPublishCommand($app['files']));
 
-            $app['events']->fire(new ArtisanStarting($console));
+            $app['events']->dispatch(new ArtisanStarting($console));
             static::$instance = $console;
         }
 
