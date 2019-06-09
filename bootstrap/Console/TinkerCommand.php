@@ -33,7 +33,7 @@ class TinkerCommand extends Command
      *
      * @return void
      */
-    public function fire()
+    public function handle()
     {
         $this->getApplication()->setCatchExceptions(false);
         $config = new Configuration;
