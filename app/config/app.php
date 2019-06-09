@@ -15,7 +15,10 @@ return [
 
     'providers' => [
         'Illuminate\Database\MigrationServiceProvider',
-        'Illuminate\Database\SeedServiceProvider',
+        /*
+         * Missing class in Illuminate\Database 5.8
+         */
+        //'Illuminate\Database\SeedServiceProvider',
         /*
          * To add Redis support,
          *     - run composer require illuminate/redis:5.2.*
