@@ -189,4 +189,14 @@ class Application extends Container
     {
         $this['exception']->error($callback);
     }
+
+    /**
+     * Get Application Namespace
+     *
+     * @return int|string
+     */
+    public function getNamespace()
+    {
+        return getAppNamespace();
+    }
 } 
