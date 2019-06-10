@@ -17,14 +17,14 @@ Laravel Database utilizes [Composer](http://getcomposer.org/) to manage its depe
 
 Install Laravel Database by issuing the Composer create-project command in your terminal:
 
-	composer create-project laravel/database --prefer-dist
+    composer create-project laravel/database --prefer-dist
 
 ## Usage Instructions
 
 From your public `index.php` include the `autoload.php` in `bootstrap` folder this internally uses composer autoloader. 
 This enables lazy loading of all db related classes. Only when you call one of the DB related class, database engine is initialized.
 
-Even when using version `5.2.*` the folder structure will be the same as `4.2.*`
+Even when using version `5.8.*` the folder structure will be the same as `4.2.*`
 
 ## Adding More Components
 
