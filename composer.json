@@ -1,6 +1,6 @@
 {
     "name": "laravel/database",
-    "description": "Get Laravel 5.2.x database for your non laravel projects. Built on top of illuminate/database to provide migration, seeding and artisan support",
+    "description": "Get Laravel 5.8.x database for your non laravel projects. Built on top of illuminate/database to provide migration, seeding and artisan support",
     "keywords": ["laravel", "database", "sql", "orm"],
     "minimum-stability": "dev",
     "license": "MIT",
