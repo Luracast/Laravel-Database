@@ -29,6 +29,11 @@ class Application extends Container
         //$this->registerErrorHandling();
     }
 
+    public static function version()
+    {
+        return static::VERSION;
+    }
+
     /**
      * Get the path to the application "app" directory.
      *

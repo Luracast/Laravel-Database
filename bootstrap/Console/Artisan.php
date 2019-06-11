@@ -1,4 +1,5 @@
 <?php
+
 namespace Bootstrap\Console;
 
 use Bootstrap\Container\Application;
@@ -14,12 +15,9 @@ use Illuminate\Database\Console\Migrations\ResetCommand;
 use Illuminate\Database\Console\Migrations\RollbackCommand;
 use Illuminate\Database\Console\Migrations\StatusCommand;
 use Illuminate\Database\Console\Seeds\SeedCommand;
-use Illuminate\Database\Console\Seeds\SeederMakeCommand;
 use Illuminate\Database\Migrations\DatabaseMigrationRepository;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Facade;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\BufferedOutput;
+use Illuminate\Support\ServiceProvider;
 
 class Artisan extends \Illuminate\Console\Application
 {
@@ -31,9 +29,9 @@ class Artisan extends \Illuminate\Console\Application
     /**
      * Create a new Artisan console application.
      *
-     * @param  \Illuminate\Contracts\Container\Container $laravel
-     * @param  \Illuminate\Contracts\Events\Dispatcher $events
-     * @param  string $version
+     * @param \Illuminate\Contracts\Container\Container $laravel
+     * @param \Illuminate\Contracts\Events\Dispatcher $events
+     * @param string $version
      * @return void
      */
     public function __construct(Container $laravel, Dispatcher $events, $version)
@@ -52,8 +50,9 @@ class Artisan extends \Illuminate\Console\Application
      */
     public static function start($app = null)
     {
-        if (static::$instance)
+        if (static::$instance) {
             return static::$instance;
+        }
 
         return static::make();
     }
@@ -99,6 +98,7 @@ class Artisan extends \Illuminate\Console\Application
             $console->add(new SeedMakeCommand($app['files'], $app['composer']));
 
             $app['events']->dispatch(new ArtisanStarting($console));
+            $console->bootstrap();
             static::$instance = $console;
         }
 
@@ -111,7 +111,7 @@ class Artisan extends \Illuminate\Console\Application
         foreach ($providers as $class) {
             /** @var ServiceProvider $instance */
             $instance = new $class($app);
-            if (method_exists($instance, 'boot')){
+            if (method_exists($instance, 'boot')) {
                 $instance->boot();
             }
             $instance->register();

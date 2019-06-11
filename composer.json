@@ -25,7 +25,11 @@
     "require-dev": {
         "illuminate/console": "5.8.*",
         "psy/psysh": "0.9.*",
-        "symfony/process": "^4.2"
+        "symfony/process": "^4.2",
+        "barryvdh/laravel-ide-helper": "^2.6@dev",
+        "illuminate/queue": "^5.8",
+        "illuminate/view": "^5.8",
+        "doctrine/dbal": "~2.3"
     },
     "suggest": {
         "doctrine/dbal": "Allow renaming columns and dropping SQLite columns."

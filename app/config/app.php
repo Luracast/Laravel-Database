@@ -1,5 +1,9 @@
 <?php
 
+use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\MigrationServiceProvider;
+
 return [
 
     /*
@@ -14,11 +18,8 @@ return [
     */
 
     'providers' => [
-        'Illuminate\Database\MigrationServiceProvider',
-        /*
-         * Missing class in Illuminate\Database 5.8
-         */
-        //'Illuminate\Database\SeedServiceProvider',
+        MigrationServiceProvider::class,
+        IdeHelperServiceProvider::class
         /*
          * To add Redis support,
          *     - run composer require illuminate/redis:5.2.*
@@ -43,7 +44,6 @@ return [
         'Eloquent'                                       => 'Illuminate\Database\Eloquent\Model',
         'Schema'                                         => 'Illuminate\Support\Facades\Schema',
         'Seeder'                                         => 'Illuminate\Database\Seeder',
-        'SoftDeletingTrait'                              => 'Illuminate\Database\Eloquent\SoftDeletingTrait',
         'Artisan'                                        => 'Bootstrap\Console\ArtisanFacade',
         'Config'                                         => 'Illuminate\Support\Facades\Config',
         'Cache'                                          => 'Illuminate\Support\Facades\Cache',
@@ -53,7 +53,7 @@ return [
         'Queue'                                          => 'Illuminate\Support\Facades\Queue',
 
         //backward compatibility for 4.2.x Models
-        'Illuminate\Database\Eloquent\SoftDeletingTrait' => 'Illuminate\Database\Eloquent\SoftDeleting'
+        'Illuminate\Database\Eloquent\SoftDeletingTrait' => SoftDeletes::class
     ],
 
 ];

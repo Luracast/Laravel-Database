@@ -36,10 +36,11 @@ if (!function_exists('app')) {
     /**
      * Get the available container instance.
      *
-     * @param  string $make
-     * @param  array $parameters
+     * @param string $make
+     * @param array $parameters
      *
      * @return mixed|Application
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     function app($make = null, $parameters = [])
     {
@@ -55,8 +56,8 @@ if (!function_exists('env')) {
     /**
      * Gets the value of an environment variable. Supports boolean, empty and null.
      *
-     * @param  string $key
-     * @param  mixed $default
+     * @param string $key
+     * @param mixed $default
      *
      * @return mixed
      */
@@ -88,13 +89,28 @@ if (!function_exists('env')) {
     }
 }
 
+if (!function_exists('base_path')) {
+    /**
+     * Get the path to the storage folder.
+     *
+     * @param string $path
+     *
+     * @return string
+     */
+    function base_path($path = '')
+    {
+        return BASE . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+    }
+}
+
 if (!function_exists('storage_path')) {
     /**
      * Get the path to the storage folder.
      *
-     * @param  string $path
+     * @param string $path
      *
      * @return string
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     function storage_path($path = '')
     {
@@ -111,14 +127,6 @@ if (!function_exists('config_path')) {
     }
 }
 
-if (!function_exists('config_path')) {
-
-    function config_path($path = '')
-    {
-        return BASE . '/app/config' . ($path ? DIRECTORY_SEPARATOR . $path : $path);
-    }
-}
-
 if (!function_exists('getAppNamespace')) {
 
     function getAppNamespace()
@@ -126,8 +134,9 @@ if (!function_exists('getAppNamespace')) {
         $composer = json_decode(file_get_contents(BASE . '/composer.json'), true);
         foreach ((array)data_get($composer, 'autoload.psr-4') as $namespace => $path) {
             foreach ((array)$path as $pathChoice) {
-                if (realpath(BASE . '/' . 'bootstrap') == realpath(BASE . '/' . $pathChoice))
+                if (realpath(BASE . '/' . 'bootstrap') == realpath(BASE . '/' . $pathChoice)) {
                     return $namespace;
+                }
             }
         }
         throw new RuntimeException("Unable to detect application namespace.");
@@ -185,6 +194,15 @@ $app->singleton('db', function () use ($app) {
 
     return $db->getDatabaseManager();
 });
+
+if (!function_exists('config')) {
+    function config($path, $default)
+    {
+        if (is_string($path)) {
+            return $app['config'][$path] ?? $default;
+        }
+    }
+}
 
 /*
 |--------------------------------------------------------------------------
