@@ -50,7 +50,7 @@ return [
         'File'                                           => 'Illuminate\Support\Facades\File',
         'Event'                                          => 'Illuminate\Support\Facades\Event',
         'Redis'                                          => 'Illuminate\Support\Facades\Redis',
-        'Queue'                                          => 'Illuminate\Support\Facades\Queue',
+        'Queue'                                          => 'Illuminate\Queue\Capsule\Manager',
 
         //backward compatibility for 4.2.x Models
         'Illuminate\Database\Eloquent\SoftDeletingTrait' => SoftDeletes::class

@@ -18,8 +18,9 @@ require BASE . '/vendor/autoload.php';
 use Bootstrap\Config\Config;
 use Bootstrap\Container\Application;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Queue\Capsule\Manager as Queue;
+use Illuminate\Database\Capsule\Manager as Database;
 use Illuminate\Support\Facades\Facade;
-use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Cache\CacheManager;
 use Illuminate\Filesystem\Filesystem;
@@ -32,12 +33,12 @@ use Illuminate\Support\Str;
 |--------------------------------------------------------------------------
 */
 
-if (!function_exists('app')) {
+if ( ! function_exists('app')) {
     /**
      * Get the available container instance.
      *
      * @param string $make
-     * @param array $parameters
+     * @param array  $parameters
      *
      * @return mixed|Application
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
@@ -52,12 +53,12 @@ if (!function_exists('app')) {
     }
 }
 
-if (!function_exists('env')) {
+if ( ! function_exists('env')) {
     /**
      * Gets the value of an environment variable. Supports boolean, empty and null.
      *
      * @param string $key
-     * @param mixed $default
+     * @param mixed  $default
      *
      * @return mixed
      */
@@ -89,7 +90,7 @@ if (!function_exists('env')) {
     }
 }
 
-if (!function_exists('base_path')) {
+if ( ! function_exists('base_path')) {
     /**
      * Get the path to the storage folder.
      *
@@ -103,7 +104,7 @@ if (!function_exists('base_path')) {
     }
 }
 
-if (!function_exists('storage_path')) {
+if ( ! function_exists('storage_path')) {
     /**
      * Get the path to the storage folder.
      *
@@ -119,7 +120,7 @@ if (!function_exists('storage_path')) {
 }
 
 
-if (!function_exists('config_path')) {
+if ( ! function_exists('config_path')) {
 
     function config_path($path = '')
     {
@@ -127,7 +128,7 @@ if (!function_exists('config_path')) {
     }
 }
 
-if (!function_exists('getAppNamespace')) {
+if ( ! function_exists('getAppNamespace')) {
 
     function getAppNamespace()
     {
@@ -181,11 +182,11 @@ $app->singleton('cache', function () use ($app) {
 });
 
 $app->singleton('db', function () use ($app) {
-    $config = $app['config'];
-    $default = $config['database.default'];
-    $fetch = $config['database.fetch'];
-    $db = new Capsule($app);
-    $config['database.fetch'] = $fetch;
+    $config                     = $app['config'];
+    $default                    = $config['database.default'];
+    $fetch                      = $config['database.fetch'];
+    $db                         = new Database($app);
+    $config['database.fetch']   = $fetch;
     $config['database.default'] = $default;
     $db->addConnection($config['database.connections'][$default]);
     $db->setEventDispatcher($app['events']);
@@ -195,8 +196,25 @@ $app->singleton('db', function () use ($app) {
     return $db->getDatabaseManager();
 });
 
-if (!function_exists('config')) {
-    function config($path, $default)
+$app->singleton('queue', function () use ($app) {
+    $config                      = $app['queue'];
+    $default                     = $config['queue.default'];
+    $connections                 = $config['queue.connections'];
+    $config['queue.default']     = $default;
+    $config['queue.connections'] = $connections;
+    $queue                       = new Queue;
+    $queue->addConnection($config['queue.connections'][$default]);
+    $queue->setAsGlobal();
+
+    return $queue->getQueueManager();
+});
+
+$app->singleton('queue.connection', function () use ($app) {
+    return $app['queue']->connection();
+});
+
+if ( ! function_exists('config')) {
+    function config($path, $default = null)
     {
         if (is_string($path)) {
             return $app['config'][$path] ?? $default;
@@ -246,6 +264,7 @@ $app->singleton('redis', function () use ($app) {
 spl_autoload_register(function ($className) use ($app) {
     if (isset($app['config']['app.aliases'][$className])) {
         $app['db']; //lazy initialization of DB
+
         return class_alias($app['config']['app.aliases'][$className], $className);
     }
 
