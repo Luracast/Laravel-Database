@@ -18,9 +18,9 @@
         "illuminate/cache": "5.8.*",
         "illuminate/filesystem": "5.8.*",
         "luracast/config": "2.*",
-        "vlucas/phpdotenv": "~1.0",
         "league/flysystem": "~1.0",
-        "illuminate/pagination": "5.8.*"
+        "illuminate/pagination": "5.8.*",
+        "vlucas/phpdotenv": "^3.4@dev"
     },
     "require-dev": {
         "illuminate/console": "5.8.*",
