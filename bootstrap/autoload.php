@@ -48,6 +48,7 @@ if ( ! function_exists('app')) {
         if (is_null($make)) {
             return Application::getInstance();
         }
+
         return Application::getInstance()->make($make, $parameters);
     }
 }
@@ -89,34 +90,6 @@ if ( ! function_exists('env')) {
     }
 }
 
-if ( ! function_exists('base_path')) {
-    function base_path($path = '')
-    {
-        return app('path.base') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
-    }
-}
-
-if ( ! function_exists('storage_path')) {
-    function storage_path($path = '')
-    {
-        return app('path.storage') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
-    }
-}
-
-if ( ! function_exists('config_path')) {
-    function config_path($path = '')
-    {
-        return app('path.config') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
-    }
-}
-
-if ( ! function_exists('database_path')) {
-    function database_path($path = '')
-    {
-        return app('path.database') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
-    }
-}
-
 if ( ! function_exists('getAppNamespace')) {
     function getAppNamespace()
     {
@@ -155,7 +128,48 @@ $env = $app->detectEnvironment(function () {
 $app['app'] = $app;
 Facade::setFacadeApplication($app);
 
-$app->instance('config', new Config(BASE . '/config', $env));
+/*
+|--------------------------------------------------------------------------
+| Bind Paths
+|--------------------------------------------------------------------------
+|
+| Here we are binding the paths configured in paths.php to the app. You
+| should not be changing these here. If you need to change these you
+| may do so within the paths.php file and they will be bound here.
+|
+*/
+
+$app->bindInstallPaths(require __DIR__ . '/paths.php');
+
+if ( ! function_exists('base_path')) {
+    function base_path($path = '')
+    {
+        return app('path.base') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+    }
+}
+
+if ( ! function_exists('storage_path')) {
+    function storage_path($path = '')
+    {
+        return app('path.storage') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+    }
+}
+
+if ( ! function_exists('config_path')) {
+    function config_path($path = '')
+    {
+        return app('path.config') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+    }
+}
+
+if ( ! function_exists('database_path')) {
+    function database_path($path = '')
+    {
+        return app('path.database') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+    }
+}
+
+$app->instance('config', new Config(app('path.config'), $env));
 
 $app->singleton('events', function () use ($app) {
     return new Dispatcher($app);
@@ -258,16 +272,3 @@ spl_autoload_register(function ($className) use ($app) {
 
     return false;
 }, true, true);
-
-/*
-|--------------------------------------------------------------------------
-| Bind Paths
-|--------------------------------------------------------------------------
-|
-| Here we are binding the paths configured in paths.php to the app. You
-| should not be changing these here. If you need to change these you
-| may do so within the paths.php file and they will be bound here.
-|
-*/
-
-$app->bindInstallPaths(require __DIR__ . '/paths.php');
