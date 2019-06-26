@@ -48,7 +48,6 @@ if ( ! function_exists('app')) {
         if (is_null($make)) {
             return Application::getInstance();
         }
-
         return Application::getInstance()->make($make, $parameters);
     }
 }
@@ -91,45 +90,34 @@ if ( ! function_exists('env')) {
 }
 
 if ( ! function_exists('base_path')) {
-    /**
-     * Get the path to the storage folder.
-     *
-     * @param string $path
-     *
-     * @return string
-     */
     function base_path($path = '')
     {
-        return BASE . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+        return app('path.base') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
     }
 }
 
 if ( ! function_exists('storage_path')) {
-    /**
-     * Get the path to the storage folder.
-     *
-     * @param string $path
-     *
-     * @return string
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     */
     function storage_path($path = '')
     {
         return app('path.storage') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
     }
 }
 
-
 if ( ! function_exists('config_path')) {
-
     function config_path($path = '')
     {
-        return BASE . '/app/config' . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+        return app('path.config') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+    }
+}
+
+if ( ! function_exists('database_path')) {
+    function database_path($path = '')
+    {
+        return app('path.database') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
     }
 }
 
 if ( ! function_exists('getAppNamespace')) {
-
     function getAppNamespace()
     {
         $composer = json_decode(file_get_contents(BASE . '/composer.json'), true);
@@ -167,7 +155,7 @@ $env = $app->detectEnvironment(function () {
 $app['app'] = $app;
 Facade::setFacadeApplication($app);
 
-$app->instance('config', new Config(BASE . '/app/config', $env));
+$app->instance('config', new Config(BASE . '/config', $env));
 
 $app->singleton('events', function () use ($app) {
     return new Dispatcher($app);
