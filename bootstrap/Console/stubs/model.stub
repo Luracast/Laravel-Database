@@ -1,11 +1,13 @@
 <?php
 
+namespace DummyNamespace;
+
 softdelete:import/**
  * Class class:name
  *
  * comment:properties
  */
-class class:name extends Eloquent
+class class:name extends \Eloquent
 {
     softdelete:use
     /**

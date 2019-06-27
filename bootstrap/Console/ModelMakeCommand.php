@@ -27,7 +27,7 @@ class ModelMakeCommand extends Command
     /**
      * Create a new model creator command.
      *
-     * @param  \Illuminate\Filesystem\Filesystem $files
+     * @param \Illuminate\Filesystem\Filesystem $files
      *
      * @return \Bootstrap\Console\ModelMakeCommand
      */
@@ -42,6 +42,7 @@ class ModelMakeCommand extends Command
      * Execute the console command.
      *
      * @return void
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function handle()
     {
@@ -62,8 +63,8 @@ class ModelMakeCommand extends Command
     /**
      * Write the finished command file to disk.
      *
-     * @param  string $file
-     * @param  string $stub
+     * @param string $file
+     * @param string $stub
      *
      * @return void
      */
@@ -82,7 +83,7 @@ class ModelMakeCommand extends Command
     /**
      * Format the command class stub.
      *
-     * @param  string $stub
+     * @param string $stub
      *
      * @return string
      */
@@ -140,6 +141,7 @@ class ModelMakeCommand extends Command
 
         $stub = str_replace(
             [
+                'DummyNamespace',
                 'class:name',
                 'table:name',
                 'table:timestamps',
@@ -150,6 +152,7 @@ class ModelMakeCommand extends Command
                 'comment:properties'
             ],
             [
+                rtrim(getAppNamespace(),'\\'),
                 $className,
                 $tableName,
                 $timestamps,
@@ -176,7 +179,7 @@ class ModelMakeCommand extends Command
         $path = $this->input->getOption('path');
 
         if (is_null($path)) {
-            return $this->laravel['path'] . '/models';
+            return $this->laravel['path'];
         } else {
             return $this->laravel['path.base'] . '/' . $path;
         }

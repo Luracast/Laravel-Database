@@ -96,7 +96,7 @@ if (!function_exists('getAppNamespace')) {
         $composer = json_decode(file_get_contents(BASE . '/composer.json'), true);
         foreach ((array)data_get($composer, 'autoload.psr-4') as $namespace => $path) {
             foreach ((array)$path as $pathChoice) {
-                if (realpath(BASE . '/' . 'bootstrap') == realpath(BASE . '/' . $pathChoice)) {
+                if (realpath(BASE . '/' . 'app') == realpath(BASE . '/' . $pathChoice)) {
                     return $namespace;
                 }
             }
