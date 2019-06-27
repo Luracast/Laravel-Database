@@ -15,7 +15,7 @@ class SeedMakeCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $name = 'make:seed';
+    protected $name = 'make:seeder';
 
     /**
      * The console command description.
