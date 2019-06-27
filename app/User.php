@@ -1,6 +1,8 @@
 <?php
 
-class User extends Eloquent {
+namespace App;
+
+class User extends \Eloquent {
 
 	/**
 	 * The database table used by the model.
@@ -9,12 +11,32 @@ class User extends Eloquent {
 	 */
 	protected $table = 'users';
 
-	/**
-	 * The attributes excluded from the model's JSON form.
-	 *
-	 * @var array
-	 */
-	protected $hidden = array('password');
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'name', 'email', 'password',
+    ];
+
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'password', 'remember_token',
+    ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
 
 	/**
 	 * Get the unique identifier for the user.
