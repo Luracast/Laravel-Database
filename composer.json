@@ -1,51 +1,58 @@
 {
-    "name": "laravel/database",
-    "description": "Get Laravel 5.8.x database for your non laravel projects. Built on top of illuminate/database to provide migration, seeding and artisan support",
-    "keywords": ["laravel", "database", "sql", "orm"],
-    "minimum-stability": "dev",
-    "license": "MIT",
-    "type": "project",
-    "authors": [
-        {
-            "name": "Arul Kumaran",
-            "email": "arul@luracast.com"
-        }
-    ],
-    "require": {
-        "php": "^7.1.3",
-        "illuminate/database": "5.8.*",
-        "illuminate/events": "5.8.*",
-        "illuminate/cache": "5.8.*",
-        "illuminate/filesystem": "5.8.*",
-        "luracast/config": "2.*",
-        "league/flysystem": "~1.0",
-        "illuminate/pagination": "5.8.*",
-        "vlucas/phpdotenv": "^3.4@dev"
-    },
-    "require-dev": {
-        "illuminate/console": "5.8.*",
-        "psy/psysh": "0.9.*",
-        "symfony/process": "^4.2",
-        "barryvdh/laravel-ide-helper": "^2.6@dev",
-        "illuminate/queue": "^5.8",
-        "illuminate/view": "^5.8",
-        "doctrine/dbal": "~2.3"
-    },
-    "suggest": {
-        "doctrine/dbal": "Allow renaming columns and dropping SQLite columns."
-    },
-    "autoload": {
-        "classmap": [
-            "app/commands",
-            "app/models",
-            "app/database/migrations",
-            "app/database/seeds"
-        ],
-        "psr-0": {
-            "": "app/controllers"
-        },
-        "psr-4": {
-            "Bootstrap\\": "bootstrap/"
-        }
+  "name": "laravel/database",
+  "description": "Get Laravel 5.8.x database for your non laravel projects. Built on top of illuminate/database to provide migration, seeding and artisan support",
+  "keywords": [
+    "laravel",
+    "database",
+    "sql",
+    "orm"
+  ],
+  "license": "MIT",
+  "type": "project",
+  "authors": [
+    {
+      "name": "Arul Kumaran",
+      "email": "arul@luracast.com"
     }
+  ],
+  "require": {
+    "php": "^7.1.3",
+    "illuminate/database": "5.8.*",
+    "illuminate/events": "5.8.*",
+    "illuminate/cache": "5.8.*",
+    "illuminate/filesystem": "5.8.*",
+    "luracast/config": "2.*",
+    "league/flysystem": "~1.0",
+    "illuminate/pagination": "5.8.*",
+    "vlucas/phpdotenv": "^3.4@dev"
+  },
+  "require-dev": {
+    "illuminate/console": "5.8.*",
+    "psy/psysh": "0.9.*",
+    "symfony/process": "^4.2",
+    "barryvdh/laravel-ide-helper": "^2.6@dev",
+    "illuminate/queue": "^5.8",
+    "illuminate/view": "^5.8",
+    "doctrine/dbal": "~2.3"
+  },
+  "suggest": {
+    "doctrine/dbal": "Allow renaming columns and dropping SQLite columns."
+  },
+  "autoload": {
+    "psr-4": {
+      "Bootstrap\\": "bootstrap/",
+      "App\\": "app/"
+    },
+    "classmap": [
+      "database/seeds",
+      "database/factories"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
 }

@@ -33,12 +33,12 @@ use Illuminate\Support\Str;
 |--------------------------------------------------------------------------
 */
 
-if ( ! function_exists('app')) {
+if (!function_exists('app')) {
     /**
      * Get the available container instance.
      *
      * @param string $make
-     * @param array  $parameters
+     * @param array $parameters
      *
      * @return mixed|Application
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
@@ -53,12 +53,12 @@ if ( ! function_exists('app')) {
     }
 }
 
-if ( ! function_exists('env')) {
+if (!function_exists('env')) {
     /**
      * Gets the value of an environment variable. Supports boolean, empty and null.
      *
      * @param string $key
-     * @param mixed  $default
+     * @param mixed $default
      *
      * @return mixed
      */
@@ -90,7 +90,7 @@ if ( ! function_exists('env')) {
     }
 }
 
-if ( ! function_exists('getAppNamespace')) {
+if (!function_exists('getAppNamespace')) {
     function getAppNamespace()
     {
         $composer = json_decode(file_get_contents(BASE . '/composer.json'), true);
@@ -118,7 +118,8 @@ $app = new Application();
 |
 */
 if (file_exists(BASE . '/.env')) {
-    Dotenv::load(BASE);
+    $dotenv = Dotenv\Dotenv::create(BASE);
+    $dotenv->load();
 }
 
 $env = $app->detectEnvironment(function () {
@@ -141,28 +142,28 @@ Facade::setFacadeApplication($app);
 
 $app->bindInstallPaths(require __DIR__ . '/paths.php');
 
-if ( ! function_exists('base_path')) {
+if (!function_exists('base_path')) {
     function base_path($path = '')
     {
         return app('path.base') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
     }
 }
 
-if ( ! function_exists('storage_path')) {
+if (!function_exists('storage_path')) {
     function storage_path($path = '')
     {
         return app('path.storage') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
     }
 }
 
-if ( ! function_exists('config_path')) {
+if (!function_exists('config_path')) {
     function config_path($path = '')
     {
         return app('path.config') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
     }
 }
 
-if ( ! function_exists('database_path')) {
+if (!function_exists('database_path')) {
     function database_path($path = '')
     {
         return app('path.database') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
@@ -184,11 +185,11 @@ $app->singleton('cache', function () use ($app) {
 });
 
 $app->singleton('db', function () use ($app) {
-    $config                     = $app['config'];
-    $default                    = $config['database.default'];
-    $fetch                      = $config['database.fetch'];
-    $db                         = new Database($app);
-    $config['database.fetch']   = $fetch;
+    $config = $app['config'];
+    $default = $config['database.default'];
+    $fetch = $config['database.fetch'];
+    $db = new Database($app);
+    $config['database.fetch'] = $fetch;
     $config['database.default'] = $default;
     $db->addConnection($config['database.connections'][$default]);
     $db->setEventDispatcher($app['events']);
@@ -199,12 +200,12 @@ $app->singleton('db', function () use ($app) {
 });
 
 $app->singleton('queue', function () use ($app) {
-    $config                      = $app['queue'];
-    $default                     = $config['queue.default'];
-    $connections                 = $config['queue.connections'];
-    $config['queue.default']     = $default;
+    $config = $app['queue'];
+    $default = $config['queue.default'];
+    $connections = $config['queue.connections'];
+    $config['queue.default'] = $default;
     $config['queue.connections'] = $connections;
-    $queue                       = new Queue;
+    $queue = new Queue;
     $queue->addConnection($config['queue.connections'][$default]);
     $queue->setAsGlobal();
 
@@ -215,7 +216,7 @@ $app->singleton('queue.connection', function () use ($app) {
     return $app['queue']->connection();
 });
 
-if ( ! function_exists('config')) {
+if (!function_exists('config')) {
     function config($path, $default = null)
     {
         if (is_string($path)) {
