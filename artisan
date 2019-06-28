@@ -18,7 +18,7 @@ use Bootstrap\Console\Artisan;
 $artisan = Artisan::start();
 
 //load custom registered commands
-include BASE . '/app/start/artisan.php';
+include BASE . '/routes/console.php';
 
 /*
 |--------------------------------------------------------------------------

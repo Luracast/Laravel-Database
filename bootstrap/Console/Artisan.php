@@ -3,6 +3,7 @@
 namespace Bootstrap\Console;
 
 use Bootstrap\Container\Application;
+use Closure;
 use Illuminate\Console\Events\ArtisanStarting;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
@@ -97,6 +98,9 @@ class Artisan extends \Illuminate\Console\Application
             $console->add(new SeedCommand($app['db']));
             $console->add(new SeedMakeCommand($app['files'], $app['composer']));
 
+            //Tinker Command
+            $console->add(new TinkerCommand());
+
             $app['events']->dispatch(new ArtisanStarting($console));
             $console->bootstrap();
             static::$instance = $console;
@@ -116,5 +120,21 @@ class Artisan extends \Illuminate\Console\Application
             }
             $instance->register();
         }
+    }
+
+    /**
+     * Register a Closure based command with the application.
+     *
+     * @param string $signature
+     * @param Closure $callback
+     * @return ClosureCommand
+     */
+    public function command($signature, Closure $callback)
+    {
+        $command = new ClosureCommand($signature, $callback);
+
+        $this->add($command);
+
+        return $command;
     }
 } 
