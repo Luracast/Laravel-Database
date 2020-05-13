@@ -118,7 +118,7 @@ $app = new Application();
 |
 */
 if (file_exists(BASE . '/.env')) {
-    $dotenv = Dotenv\Dotenv::create(BASE);
+    $dotenv = Dotenv\Dotenv::createMutable(BASE);
     $dotenv->load();
 }
 

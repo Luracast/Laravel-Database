@@ -55,7 +55,7 @@ class ClosureCommand extends Command
             }
         }
 
-        return $this->laravel->call(
+        return (int) $this->laravel->call(
             $this->callback->bindTo($this, $this), $parameters
         );
     }

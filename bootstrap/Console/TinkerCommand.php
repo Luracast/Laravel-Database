@@ -1,9 +1,12 @@
-<?php namespace Bootstrap\Console;
+<?php
+namespace Bootstrap\Console;
 
-use Psy\Shell;
-use Psy\Configuration;
 use Illuminate\Console\Command;
+use Psy\Configuration;
+use Psy\Shell;
+use Psy\VersionUpdater\Checker;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
 class TinkerCommand extends Command
 {
@@ -13,7 +16,13 @@ class TinkerCommand extends Command
      * @var array
      */
     protected $commandWhitelist = [
-        'clear-compiled', 'down', 'env', 'inspire', 'migrate', 'optimize', 'up',
+        'clear-compiled',
+        'down',
+        'env',
+        'inspire',
+        'migrate',
+        'optimize',
+        'up',
     ];
     /**
      * The console command name.
@@ -31,19 +40,33 @@ class TinkerCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return void
+     * @return integer
      */
     public function handle()
     {
         $this->getApplication()->setCatchExceptions(false);
         $config = new Configuration;
+        $config->setUpdateCheck(Checker::NEVER);
         $config->getPresenter()->addCasters(
             $this->getCasters()
         );
         $shell = new Shell($config);
         $shell->addCommands($this->getCommands());
         $shell->setIncludes($this->argument('include'));
-        $shell->run();
+        if ($code = $this->option('execute')) {
+            try {
+                $shell->execute($code);
+            } finally {
+                //$loader->unregister();
+            }
+
+            return 0;
+        }
+        try {
+            return $shell->run();
+        } finally {
+            // $loader->unregister();
+        }
     }
 
     /**
@@ -71,8 +94,8 @@ class TinkerCommand extends Command
     protected function getCasters()
     {
         return [
-            'Illuminate\Foundation\Application'  => 'Bootstrap\Console\IlluminateCaster::castApplication',
-            'Illuminate\Support\Collection'      => 'Bootstrap\Console\IlluminateCaster::castCollection',
+            'Illuminate\Foundation\Application' => 'Bootstrap\Console\IlluminateCaster::castApplication',
+            'Illuminate\Support\Collection' => 'Bootstrap\Console\IlluminateCaster::castCollection',
             'Illuminate\Database\Eloquent\Model' => 'Bootstrap\Console\IlluminateCaster::castModel',
         ];
     }
@@ -86,6 +109,18 @@ class TinkerCommand extends Command
     {
         return [
             ['include', InputArgument::IS_ARRAY, 'Include file(s) before starting tinker'],
+        ];
+    }
+
+    /**
+     * Get the console command options.
+     *
+     * @return array
+     */
+    protected function getOptions()
+    {
+        return [
+            ['execute', null, InputOption::VALUE_OPTIONAL, 'Execute the given code using Tinker'],
         ];
     }
 }

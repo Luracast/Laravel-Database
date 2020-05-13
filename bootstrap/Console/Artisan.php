@@ -16,6 +16,7 @@ use Illuminate\Database\Console\Migrations\ResetCommand;
 use Illuminate\Database\Console\Migrations\RollbackCommand;
 use Illuminate\Database\Console\Migrations\StatusCommand;
 use Illuminate\Database\Console\Seeds\SeedCommand;
+use Illuminate\Database\Console\WipeCommand;
 use Illuminate\Database\Migrations\DatabaseMigrationRepository;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
@@ -71,7 +72,7 @@ class Artisan extends \Illuminate\Console\Application
             /** @var Application $app */
             $app = Facade::getFacadeApplication();
             /** @var Artisan $console */
-            with($console = new static($app, $app['events'], '5.8.*'))
+            with($console = new static($app, $app['events'], Application::VERSION . '.*'))
                 //->setExceptionHandler($app['exception'])
                 ->setAutoExit(false);
 
@@ -86,6 +87,7 @@ class Artisan extends \Illuminate\Console\Application
 
             // DB Migration Commands
             $console->add(new InstallCommand(new DatabaseMigrationRepository($app['db'], "migrations")));
+            $console->add(new WipeCommand());
             $console->add(new MigrateCommand($app['migrator']));
             $console->add(new MigrateMakeCommand($app['migration.creator'], $app['composer']));
             $console->add(new StatusCommand($app['migrator']));
@@ -137,4 +139,4 @@ class Artisan extends \Illuminate\Console\Application
 
         return $command;
     }
-} 
+}

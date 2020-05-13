@@ -8,7 +8,7 @@ use Closure;
 class Application extends Container
 {
 
-    const VERSION = 5.8;
+    const VERSION = '7.10';
 
     /**
      * The base path of the application installation.
@@ -211,4 +211,4 @@ class Application extends Container
     {
         return getAppNamespace();
     }
-} 
+}
