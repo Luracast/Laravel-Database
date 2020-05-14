@@ -101,7 +101,7 @@ class Artisan extends \Illuminate\Console\Application
             $console->add(new SeedMakeCommand($app['files'], $app['composer']));
 
             //Tinker Command
-            $console->add(new TinkerCommand());
+            //$console->add(new TinkerCommand());
 
             $app['events']->dispatch(new ArtisanStarting($console));
             $console->bootstrap();
