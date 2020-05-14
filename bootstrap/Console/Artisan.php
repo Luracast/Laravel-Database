@@ -31,8 +31,8 @@ class Artisan extends \Illuminate\Console\Application
     /**
      * Create a new Artisan console application.
      *
-     * @param \Illuminate\Contracts\Container\Container $laravel
-     * @param \Illuminate\Contracts\Events\Dispatcher $events
+     * @param Container $laravel
+     * @param Dispatcher $events
      * @param string $version
      * @return void
      */

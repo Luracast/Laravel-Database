@@ -1,6 +1,5 @@
 <?php
 
-use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\MigrationServiceProvider;
 
@@ -19,10 +18,9 @@ return [
 
     'providers' => [
         MigrationServiceProvider::class,
-        IdeHelperServiceProvider::class
         /*
          * To add Redis support,
-         *     - run composer require illuminate/redis:5.2.*
+         *     - run composer require illuminate/redis:7.10.*
          *     - uncomment the line below
          */
         // 'Illuminate\Redis\RedisServiceProvider',

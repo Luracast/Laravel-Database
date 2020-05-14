@@ -1,6 +1,6 @@
 {
   "name": "laravel/database",
-  "description": "Get Laravel 5.8.x database for your non laravel projects. Built on top of illuminate/database to provide migration, seeding and artisan support",
+  "description": "Get Laravel 7.11.x database for your non laravel projects. Built on top of illuminate/database to provide migration, seeding and artisan support",
   "keywords": [
     "laravel",
     "database",
@@ -29,7 +29,6 @@
     "vlucas/phpdotenv": "^4.1"
   },
   "require-dev": {
-    "barryvdh/laravel-ide-helper": "^2.7@dev",
     "doctrine/dbal": "~2.10",
     "illuminate/console": "^7.10",
     "illuminate/queue": "^7.10",
