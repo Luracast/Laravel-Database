@@ -8,7 +8,7 @@ use Closure;
 class Application extends Container
 {
 
-    const VERSION = '7.11';
+    const VERSION = '7.22';
 
     /**
      * The base path of the application installation.
@@ -122,7 +122,7 @@ class Application extends Container
     public function detectEnvironment($environments)
     {
         $args = isset($_SERVER['argv']) ? $_SERVER['argv'] : null;
-        if (php_sapi_name() == 'cli' && ! is_null($value = $this->getEnvironmentArgument($args))) {
+        if (php_sapi_name() == 'cli' && !is_null($value = $this->getEnvironmentArgument($args))) {
             //running in console and env param is set
             return $this['env'] = head(array_slice(explode('=', $value), 1));
         } else {
