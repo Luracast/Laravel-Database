@@ -1,28 +1,30 @@
 <?php
 
-namespace DummyNamespace;
+namespace {{ namespace }};
 
-softdelete:import/**
- * Class class:name
+use Illuminate\Database\Eloquent\Model;
+{{ import }}
+/**
+ * Class {{ class }}
  *
- * comment:properties
+ * {{ properties }}
  */
-class class:name extends \Eloquent
+ class {{ class }} extends Model
 {
-    softdelete:use
+    {{ use }}
     /**
      * Indicates if the model should be timestamped.
      *
      * @var bool
      */
-    public $timestamps = table:timestamps;
+    public $timestamps = {{ timestamps }};
 
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'table:name';
+    protected $table = '{{ table }}';
 
     /**
      * The attributes that are mass assignable.
@@ -30,7 +32,7 @@ class class:name extends \Eloquent
      * @var array
      */
     protected $fillable = [ //TODO: edit fillable
-        table:fillable
+        {{ fillable }}
     ];
 
     /**
@@ -39,7 +41,6 @@ class class:name extends \Eloquent
      * @var array
      */
     protected $hidden = [
-        table:hidden
+        {{ hidden }}
     ];
-
 }

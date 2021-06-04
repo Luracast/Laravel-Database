@@ -18,7 +18,12 @@
 |
 */
 
-require __DIR__.'/../bootstrap/autoload.php';
+use App\Http\Controllers\Home;
+use App\Http\Controllers\Reviews;
+use Luracast\Restler\Explorer\v2\Explorer;
+use Luracast\Restler\Restler;
+
+require __DIR__ . '/../bootstrap/autoload.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -26,7 +31,7 @@ require __DIR__.'/../bootstrap/autoload.php';
 |--------------------------------------------------------------------------
 |
 | Configure your favourite web app framework to handle web requests and
-| respond back. If you are using Restler framework, you may simply uncomment
+| respond back. If you are using Restler 5 framework, you may simply uncomment
 | the code below and run the following command from the command line on the
 | project root folder
 |
@@ -34,11 +39,6 @@ require __DIR__.'/../bootstrap/autoload.php';
 |
 */
 
-/*
-use Luracast\Restler\Restler;
-$r = new Restler();
-$r->addApiClass('Explorer');
-*/
 
 /*
 |--------------------------------------------------------------------------
@@ -49,5 +49,6 @@ $r->addApiClass('Explorer');
 | request and response
 |
 */
-
+// $r = new Restler();
+// $r->addAPIClass('YourClassNameHere');
 // $r->handle();

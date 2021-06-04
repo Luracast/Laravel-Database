@@ -1,0 +1,83 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ namespacedModel }};
+use Psr\Http\Message\ServerRequestInterface;
+use Luracast\Restler\Data\PaginatedResponse;
+use Luracast\Restler\Exceptions\HttpException;
+
+/**
+ * manage {{ modelVariable }} resources
+ */
+class {{ class }}
+{
+    /**
+     * @var string
+     */
+    private $path;
+
+    /**
+     *  a listing of {{ modelVariable }} resource.
+     *
+     * @param int $page {@min 1} page number
+     * @param int $per_page {@min 1} number of items per page
+     *
+     * @return PaginatedResponse {@type {{ model }}}
+     */
+    public function index(int $page = 1, int $per_page = 15): PaginatedResponse
+    {
+        return new PaginatedResponse({{ model }}::paginate($per_page, ['*'], 'page', $page)->setPath($this->path));
+    }
+
+    /**
+     * get a {{ modelVariable }} by id
+     *
+     * @param int $id
+     * @return {{ model }}
+     *
+     * @throws HttpException 404 {{ modelVariable }} not found
+     */
+    public function get(int $id): {{ model }}
+    {
+        if (!${{ modelVariable }} = {{ model }}::find($id)) {
+            throw new HttpException(404, '{{ modelVariable }} not found');
+        }
+        return ${{ modelVariable }};
+    }
+
+    /**
+     * create new {{ modelVariable }}
+     *
+     * @param {{ model }} ${{ modelVariable }}
+     * @return {{ model }}
+     *
+     * @status 201
+     */
+    public function post({{ model }} ${{ modelVariable }}): {{ model }}
+    {
+        ${{ modelVariable }}->save();
+        return ${{ modelVariable }};
+    }
+
+    /**
+     * delete a {{ modelVariable }} by id
+     *
+     * @param int $id
+     * @return {{ model }}
+     * @throws HttpException 404 {{ modelVariable }} not found
+     */
+    public function delete(int $id): {{ model }}
+    {
+        if (!${{ modelVariable }} = {{ model }}::find($id)) {
+            throw new HttpException(404, '{{ modelVariable }} not found');
+        }
+        ${{ modelVariable }}->delete();
+        return ${{ modelVariable }};
+    }
+
+    public function __construct(ServerRequestInterface $request)
+    {
+        $this->path = $request->getUri()->getPath();
+    }
+}

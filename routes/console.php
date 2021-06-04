@@ -13,6 +13,7 @@
 */
 
 
+use App\Console\Commands\ControllerMakeCommand;
 
 Artisan::command('inspire', function () {
     $this->comment("All is well");
@@ -20,3 +21,4 @@ Artisan::command('inspire', function () {
 
 
 //Artisan::add(new MyCommand());
+Artisan::add(new ControllerMakeCommand($app['files']));

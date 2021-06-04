@@ -3,6 +3,42 @@
 Provides full laravel database functionality for your non laravel projects adds 
 Migration, Seeding and Artisan support to Illuminate Database.
 
+It enables **artisan** command line tool with:
+
+```
+Available commands:
+
+  dump-autoload     Regenerate framework autoload files
+  env               Display the current framework environment
+  help              Display help for a command
+  inspire           Display an inspiring quote
+  list              List commands
+  migrate           Run the database migrations
+  serve             Serve the application on the PHP development server
+  tinker            Interact with your application
+  
+  db
+  db:seed           Seed the database with records
+  
+  make
+  make:command      Create a new Artisan command
+  make:controller   Create a new controller class
+  make:factory      Create a new model factory
+  make:migration    Create a new migration file
+  make:model        Create a new Eloquent model class
+  make:seeder       Create a new seeder class
+  
+  migrate
+  migrate:fresh     Drop all tables and re-run all migrations
+  migrate:install   Create the migration repository
+  migrate:refresh   Reset and re-run all migrations
+  migrate:reset     Rollback all database migrations
+  migrate:rollback  Rollback the last database migration
+  migrate:status    Show the status of each migration
+  
+  vendor
+  vendor:publish    Publish any publishable assets from vendor packages
+```
 
 [Laravel](https://github.com/laravel/laravel) is a web application framework with expressive, elegant syntax. 
 We extracted the database functionality from it and made it available for other frameworks.
@@ -31,13 +67,18 @@ Install Laravel Database by issuing the Composer create-project command in your 
 ## Usage Instructions
 
 From your public `index.php` include the `autoload.php` in `bootstrap` folder this internally uses composer autoloader. 
-This enables lazy loading of all db related classes. Only when you call one of the DB related class, 
-database engine is initialized.
+This enables lazy loading of all db related classes. It doest not boot the database engine until you call one 
+of the DB related class.
 
-## Adding More Components
+### Adding More Components
 
 For instructions on how to add more laravel components or compatible third party service providers etc., 
 read the comments in `app/config/app.php` file
+
+### Practical Usage Example
+
+- [Restler Application Eloquent Template](https://github.com/Luracast/Restler-Application/tree/eloquent) enables
+  restler framework application's to utilize the power and elegance of *eloquent*
 
 ## Official Documentation
 

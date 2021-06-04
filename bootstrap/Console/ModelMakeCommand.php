@@ -1,13 +1,16 @@
 <?php namespace Bootstrap\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Schema;
 use DB;
+use Throwable;
 
-class ModelMakeCommand extends Command
+class ModelMakeCommand extends GeneratorCommand
 {
 
     /**
@@ -22,78 +25,123 @@ class ModelMakeCommand extends Command
      *
      * @var string
      */
-    protected $description = "Create a new Eloquent Model";
+    protected $description = 'Create a new Eloquent model class';
 
     /**
-     * Create a new model creator command.
+     * The type of class being generated.
      *
-     * @param \Illuminate\Filesystem\Filesystem $files
-     *
-     * @return \Bootstrap\Console\ModelMakeCommand
+     * @var string
      */
-    public function __construct(Filesystem $files)
-    {
-        parent::__construct();
-
-        $this->files = $files;
-    }
+    protected $type = 'Model';
 
     /**
      * Execute the console command.
      *
-     * @return void
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @return void|false
+     * @throws FileNotFoundException
      */
     public function handle()
     {
-        $path = $this->getPath();
+        if (parent::handle() === false && !$this->option('force')) {
+            return false;
+        }
 
-        $stub = $this->files->get(__DIR__ . '/stubs/model.stub');
+        if ($this->option('all')) {
+            $this->input->setOption('factory', true);
+            $this->input->setOption('migration', true);
+            $this->input->setOption('seed', true);
+        }
 
-        // We'll grab the class name to determine the file name. Since applications are
-        // typically using the PSR-0 standards we can safely assume the classes name
-        // will correspond to what the actual file should be stored as on storage.
-        $file = $path . '/' . $this->input->getArgument('name') . '.php';
+        if ($this->option('factory')) {
+            $this->createFactory();
+        }
 
-        $this->writeModel($file, $stub);
+        if ($this->option('migration')) {
+            $this->createMigration();
+        }
 
-        $this->call('dump-autoload');
+        if ($this->option('seed')) {
+            $this->createSeeder();
+        }
     }
 
     /**
-     * Write the finished command file to disk.
-     *
-     * @param string $file
-     * @param string $stub
+     * Create a model factory for the model.
      *
      * @return void
      */
-    protected function writeModel($file, $stub)
+    protected function createFactory()
     {
-        $write = true;
-        if (file_exists($file)) {
-            $write = $this->confirm("Model already exist, are you sure you want to overwrite?", false);
-        }
-        if ($write) {
-            $this->files->put($file, $this->formatStub($stub));
-            $this->info('Model created successfully.');
-        }
+        $factory = Str::studly(class_basename($this->argument('name')));
+
+        $this->call('make:factory', [
+            'name' => "{$factory}Factory",
+            '--model' => $this->qualifyClass($this->getNameInput()),
+        ]);
     }
 
     /**
-     * Format the command class stub.
+     * Create a migration file for the model.
      *
-     * @param string $stub
-     *
-     * @return string
+     * @return void
      */
-    protected function formatStub($stub)
+    protected function createMigration()
     {
-        $className = $this->input->getArgument('name');
-        $tableName = is_null($this->option('table'))
-            ? str_plural(strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $className)))
-            : $this->option('table');
-        $fields = Schema::getColumnListing($tableName);
+        $table = Str::snake(Str::pluralStudly(class_basename($this->argument('name'))));
+
+        if ($this->option('pivot')) {
+            $table = Str::singular($table);
+        }
+
+        $this->call('make:migration', [
+            'name' => "create_{$table}_table",
+            '--create' => $table,
+        ]);
+    }
+
+    /**
+     * Create a seeder file for the model.
+     *
+     * @return void
+     */
+    protected function createSeeder()
+    {
+        $seeder = Str::studly(class_basename($this->argument('name')));
+
+        $this->call('make:seed', [
+            'name' => "{$seeder}Seeder",
+        ]);
+    }
+
+    protected function buildClass($name)
+    {
+        $replace = [];
+        $replace = $this->buildReplacements($replace);
+        return str_replace(
+            array_keys($replace), array_values($replace), parent::buildClass($name)
+        );
+    }
+
+    /**
+     * Build the model replacement values.
+     *
+     * @param array $replace
+     * @return array
+     */
+    protected function buildReplacements(array $replace)
+    {
+        $table = $this->option('table')
+            ?? str_plural(strtolower(
+                preg_replace('/([a-z])([A-Z])/',
+                    '$1_$2',
+                    class_basename($this->argument('name')
+                    ))));
+        try {
+            $fields = Schema::getColumnListing($table);
+        }catch (Throwable $t){
+            //ignore
+            $fields = [];
+        }
 
         $hide = ['password', 'secret'];
         $avoid = ['id', 'ID', 'verified', 'active'];
@@ -103,7 +151,6 @@ class ModelMakeCommand extends Command
         $hidden = '';
         $import = '';
         $use = '';
-        $dates = '';
 
         $properties = '';
         if (!empty($fields)) {
@@ -114,12 +161,10 @@ class ModelMakeCommand extends Command
                 if ($is_id = ends_with($property, '_id')) {
                     $avoid[] = $property;
                 }
-                //$type = DB::connection()->getDoctrineColumn($tableName, $property)->getType()->getName();
                 list($type, $subType) = $this->guessType($property);
                 $pt = in_array($property, $hide)
-                    ? '@property-write' : (
-                    in_array($property, $avoid) || $isDate ? '@property-read ' : '@property      '
-                    );
+                    ? '@property-write'
+                    : (in_array($property, $avoid) || $isDate ? '@property-read ' : '@property      ');
                 $properties .= "$pt $type \${$property}$subType\n * ";
             }
 
@@ -138,76 +183,15 @@ class ModelMakeCommand extends Command
         if (!empty($hide)) {
             $hidden = "'" . implode("',\n        '", $hide) . "'";
         }
-
-        $stub = str_replace(
-            [
-                'DummyNamespace',
-                'class:name',
-                'table:name',
-                'table:timestamps',
-                'table:fillable',
-                'table:hidden',
-                'softdelete:import',
-                'softdelete:use',
-                'comment:properties'
-            ],
-            [
-                rtrim(getAppNamespace(),'\\'),
-                $className,
-                $tableName,
-                $timestamps,
-                $fillable,
-                $hidden,
-                $import,
-                $use,
-                $properties
-            ],
-            $stub
-        );
-
-        return $stub;
-    }
-
-
-    /**
-     * Get the path where the command should be stored.
-     *
-     * @return string
-     */
-    protected function getPath()
-    {
-        $path = $this->input->getOption('path');
-
-        if (is_null($path)) {
-            return $this->laravel['path'];
-        } else {
-            return $this->laravel['path.base'] . '/' . $path;
-        }
-    }
-
-    /**
-     * Get the console command arguments.
-     *
-     * @return array
-     */
-    protected function getArguments()
-    {
-        return array(
-            array('name', InputArgument::REQUIRED, 'The name of the model.'),
-        );
-    }
-
-    /**
-     * Get the console command options.
-     *
-     * @return array
-     */
-    protected function getOptions()
-    {
-        return array(
-            array('table', null, InputOption::VALUE_OPTIONAL, 'The table to be associated with the model.', null),
-            array('path', null, InputOption::VALUE_OPTIONAL, 'The path where the model should be stored.', null),
-        );
+        return array_merge($replace, [
+            '{{ import }}' => $import,
+            '{{ properties }}' => $properties,
+            '{{ use }}' => $use,
+            '{{ table }}' => $table,
+            '{{ timestamps }}' => $timestamps,
+            '{{ fillable }}' => $fillable,
+            '{{ hidden }}' => $hidden,
+        ]);
     }
 
     protected function guessType($name)
@@ -225,5 +209,36 @@ class ModelMakeCommand extends Command
         }
 
         return [$type, $subtype];
+    }
+
+    /**
+     * Get the stub file for the generator.
+     *
+     * @return string
+     */
+    protected function getStub()
+    {
+        return __DIR__ . ($this->option('pivot')
+                ? '/stubs/model.pivot.stub'
+                : '/stubs/model.stub');
+    }
+
+    /**
+     * Get the console command options.
+     *
+     * @return array
+     */
+    protected function getOptions()
+    {
+        return [
+            ['table', 't', InputOption::VALUE_OPTIONAL, 'The table name to be associated with the model.'],
+            ['all', 'a', InputOption::VALUE_NONE, 'Generate a migration, seeder, factory, and resource controller for the model'],
+            ['controller', 'c', InputOption::VALUE_NONE, 'Create a new controller for the model'],
+            ['factory', 'f', InputOption::VALUE_NONE, 'Create a new factory for the model'],
+            ['force', null, InputOption::VALUE_NONE, 'Create the class even if the model already exists'],
+            ['migration', 'm', InputOption::VALUE_NONE, 'Create a new migration file for the model'],
+            ['seed', 's', InputOption::VALUE_NONE, 'Create a new seeder file for the model'],
+            ['pivot', 'p', InputOption::VALUE_NONE, 'Indicates if the generated model should be a custom intermediate table model'],
+        ];
     }
 }

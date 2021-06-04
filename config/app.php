@@ -38,20 +38,17 @@ return [
     */
 
     'aliases' => [
-        'DB'                                             => 'Illuminate\Database\Capsule\Manager',
-        'Eloquent'                                       => 'Illuminate\Database\Eloquent\Model',
-        'Schema'                                         => 'Illuminate\Support\Facades\Schema',
-        'Seeder'                                         => 'Illuminate\Database\Seeder',
-        'Artisan'                                        => 'Bootstrap\Console\ArtisanFacade',
-        'Config'                                         => 'Illuminate\Support\Facades\Config',
-        'Cache'                                          => 'Illuminate\Support\Facades\Cache',
-        'File'                                           => 'Illuminate\Support\Facades\File',
-        'Event'                                          => 'Illuminate\Support\Facades\Event',
-        'Redis'                                          => 'Illuminate\Support\Facades\Redis',
-        'Queue'                                          => 'Illuminate\Queue\Capsule\Manager',
-
-        //backward compatibility for 4.2.x Models
-        'Illuminate\Database\Eloquent\SoftDeletingTrait' => SoftDeletes::class
+        'Artisan'    => 'Bootstrap\Console\ArtisanFacade',
+        'Config'     => 'Illuminate\Support\Facades\Config',
+        'Cache'      => 'Illuminate\Support\Facades\Cache',
+        'DB'         => 'Illuminate\Database\Capsule\Manager',
+        'Eloquent'   => 'Illuminate\Database\Eloquent\Model',
+        'Event'      => 'Illuminate\Support\Facades\Event',
+        'File'       => 'Illuminate\Support\Facades\File',
+        'Schema'     => 'Illuminate\Support\Facades\Schema',
+        'Seeder'     => 'Illuminate\Database\Seeder',
+        'Redis'      => 'Illuminate\Support\Facades\Redis',
+        'Queue'      => 'Illuminate\Queue\Capsule\Manager',
     ],
 
 ];

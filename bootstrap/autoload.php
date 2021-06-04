@@ -1,4 +1,5 @@
 <?php
+
 define('APP_START', microtime(true));
 /*
 |--------------------------------------------------------------------------
@@ -17,14 +18,20 @@ require BASE . '/vendor/autoload.php';
 
 use Bootstrap\Config\Config;
 use Bootstrap\Container\Application;
+use Illuminate\Cache\CacheManager;
+use Illuminate\Database\Capsule\Manager as Database;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Events\Dispatcher;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Queue\Capsule\Manager as Queue;
-use Illuminate\Database\Capsule\Manager as Database;
 use Illuminate\Support\Facades\Facade;
-use Illuminate\Events\Dispatcher;
-use Illuminate\Cache\CacheManager;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
+use Luracast\Restler\Defaults;
+use Luracast\Restler\Format\HtmlFormat;
+use Luracast\Restler\Scope;
+use Luracast\Restler\UI\Bootstrap3Form;
+use Luracast\Restler\UI\Forms;
 
 
 /*
@@ -122,9 +129,11 @@ if (file_exists(BASE . '/.env')) {
     $dotenv->load();
 }
 
-$env = $app->detectEnvironment(function () {
-    return getenv('APP_ENV') ?: 'development';
-});
+$env = $app->detectEnvironment(
+    function () {
+        return getenv('APP_ENV') ?: 'development';
+    }
+);
 
 $app['app'] = $app;
 Facade::setFacadeApplication($app);
@@ -172,49 +181,80 @@ if (!function_exists('database_path')) {
 
 $app->instance('config', new Config(app('path.config'), $env));
 
-$app->singleton('events', function () use ($app) {
-    return new Dispatcher($app);
-});
+$app->singleton(
+    'events',
+    function () use ($app) {
+        return new Dispatcher($app);
+    }
+);
+$app->singleton(
+    \Illuminate\Contracts\Events\Dispatcher::class,
+    function () use ($app) {
+        return $app['events'];
+    }
+);
 
-$app->singleton('files', function () use ($app) {
-    return new Filesystem();
-});
+$app->singleton(
+    'files',
+    function () use ($app) {
+        return new Filesystem();
+    }
+);
 
-$app->singleton('cache', function () use ($app) {
-    return new CacheManager($app);
-});
+$app->singleton(
+    'cache',
+    function () use ($app) {
+        return new CacheManager($app);
+    }
+);
 
-$app->singleton('db', function () use ($app) {
-    $config = $app['config'];
-    $default = $config['database.default'];
-    $fetch = $config['database.fetch'];
-    $db = new Database($app);
-    $config['database.fetch'] = $fetch;
-    $config['database.default'] = $default;
-    $db->addConnection($config['database.connections'][$default]);
-    $db->setEventDispatcher($app['events']);
-    $db->setAsGlobal();
-    $db->bootEloquent();
+$app->singleton(
+    'db',
+    function () use ($app) {
+        $config = $app['config'];
+        $default = $config['database.default'];
+        $fetch = $config['database.fetch'];
+        $db = new Database($app);
+        $config['database.fetch'] = $fetch;
+        $config['database.default'] = $default;
+        $db->addConnection($config['database.connections'][$default]);
+        $db->setEventDispatcher($app['events']);
+        $db->setAsGlobal();
+        $db->bootEloquent();
 
-    return $db->getDatabaseManager();
-});
+        $db->getDatabaseManager()->extend(
+            'mongodb',
+            function ($config, $name) {
+                $config['name'] = $name;
+                return new Jenssegers\Mongodb\Connection($config);
+            }
+        );
+        return $db->getDatabaseManager();
+    }
+);
 
-$app->singleton('queue', function () use ($app) {
-    $config = $app['queue'];
-    $default = $config['queue.default'];
-    $connections = $config['queue.connections'];
-    $config['queue.default'] = $default;
-    $config['queue.connections'] = $connections;
-    $queue = new Queue;
-    $queue->addConnection($config['queue.connections'][$default]);
-    $queue->setAsGlobal();
+$app->singleton(
+    'queue',
+    function () use ($app) {
+        $config = $app['queue'];
+        $default = $config['queue.default'];
+        $connections = $config['queue.connections'];
+        $config['queue.default'] = $default;
+        $config['queue.connections'] = $connections;
+        $queue = new Queue;
+        $queue->addConnection($config['queue.connections'][$default]);
+        $queue->setAsGlobal();
 
-    return $queue->getQueueManager();
-});
+        return $queue->getQueueManager();
+    }
+);
 
-$app->singleton('queue.connection', function () use ($app) {
-    return $app['queue']->connection();
-});
+$app->singleton(
+    'queue.connection',
+    function () use ($app) {
+        return $app['queue']->connection();
+    }
+);
 
 if (!function_exists('config')) {
     function config($path, $default = null)
@@ -230,29 +270,36 @@ if (!function_exists('config')) {
 | Pagination Support
 |--------------------------------------------------------------------------
 */
-Paginator::currentPathResolver(function () {
-    return strtok($_SERVER["REQUEST_URI"], '?');
-});
-
-Paginator::currentPageResolver(function ($pageName = 'page') {
-    if (isset($_REQUEST[$pageName])) {
-        $page = $_REQUEST[$pageName];
-        if (filter_var($page, FILTER_VALIDATE_INT) !== false && (int)$page >= 1) {
-            return $page;
-        }
+Paginator::currentPathResolver(
+    function () {
+        return strtok($_SERVER["REQUEST_URI"], '?');
     }
+);
 
-    return 1;
-});
+Paginator::currentPageResolver(
+    function ($pageName = 'page') {
+        if (isset($_REQUEST[$pageName])) {
+            $page = $_REQUEST[$pageName];
+            if (filter_var($page, FILTER_VALIDATE_INT) !== false && (int)$page >= 1) {
+                return $page;
+            }
+        }
+
+        return 1;
+    }
+);
 
 /*
 |--------------------------------------------------------------------------
 | Redis Support
 |--------------------------------------------------------------------------
 */
-$app->singleton('redis', function () use ($app) {
-    return new Illuminate\Redis\Database($app['config']['database.redis']);
-});
+$app->singleton(
+    'redis',
+    function () use ($app) {
+        return new Illuminate\Redis\Database($app['config']['database.redis']);
+    }
+);
 
 /*
 |--------------------------------------------------------------------------
@@ -264,12 +311,43 @@ $app->singleton('redis', function () use ($app) {
 |
 */
 
-spl_autoload_register(function ($className) use ($app) {
-    if (isset($app['config']['app.aliases'][$className])) {
-        $app['db']; //lazy initialization of DB
+spl_autoload_register(
+    function ($className) use ($app) {
+        if (Model::class === $className) {
+            include __DIR__ . '/../vendor/illuminate/database/Eloquent/Model.php';
+            $app['db'];
+            return true;
+        }
+        if (Jenssegers\Mongodb\Eloquent\Model::class === $className) {
+            include __DIR__ . '/../vendor/jenssegers/mongodb/src/Jenssegers/Mongodb/Eloquent/Model.php';
+            $app['db'];
+            return true;
+        }
+        if (isset($app['config']['app.aliases'][$className])) {
+            $app['db']; //lazy initialization of DB
+            return class_alias($app['config']['app.aliases'][$className], $className);
+        }
 
-        return class_alias($app['config']['app.aliases'][$className], $className);
-    }
+        return false;
+    },
+    true,
+    true
+);
 
-    return false;
-}, true, true);
+/*
+|--------------------------------------------------------------------------
+| Configure Restler to adapt to Laravel structure
+|--------------------------------------------------------------------------
+*/
+
+$app['config']['app.aliases'] += Scope::$classAliases + ['Scope' => 'Luracast\Restler\Scope'];
+
+Defaults::$cacheDirectory = $app['config']['cache.path'];
+HtmlFormat::$viewPath = $app['path'] . '/views';
+HtmlFormat::$cacheDirectory = $app['path.storage'] . '/views';
+
+HtmlFormat::$template = 'blade';
+//Forms::$style = FormStyles::$bootstrap3; // for v4 and below
+Forms::setStyles(new Bootstrap3Form); // for v5
+
+include BASE . '/routes/api.php';

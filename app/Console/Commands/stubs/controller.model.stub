@@ -1,0 +1,68 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ namespacedModel }};
+use Luracast\Restler\Exceptions\HttpException;
+
+/**
+ * manage {{ modelVariable }} resources
+ */
+class {{ class }}
+{
+    /**
+     *  a listing of {{ modelVariable }} resource.
+     *
+     * @return {{ model }}[]
+     */
+    public function index()
+    {
+        return {{ model }}::all();
+    }
+
+    /**
+     * get a {{ modelVariable }} by id
+     *
+     * @param int $id
+     * @return {{ model }}
+     *
+     * @throws HttpException 404 {{ modelVariable }} not found
+     */
+    public function get(int $id): {{ model }}
+    {
+        if (!${{ modelVariable }} = {{ model }}::find($id)) {
+            throw new HttpException(404, '{{ modelVariable }} not found');
+        }
+        return ${{ modelVariable }};
+    }
+
+    /**
+     * create new {{ modelVariable }}
+     *
+     * @param {{ model }} ${{ modelVariable }}
+     * @return {{ model }}
+     *
+     * @status 201
+     */
+    public function post({{ model }} ${{ modelVariable }}): {{ model }}
+    {
+        ${{ modelVariable }}->save();
+        return ${{ modelVariable }};
+    }
+
+    /**
+     * delete a {{ modelVariable }} by id
+     *
+     * @param int $id
+     * @return {{ model }}
+     * @throws HttpException 404 {{ modelVariable }} not found
+     */
+    public function delete(int $id): {{ model }}
+    {
+        if (!${{ modelVariable }} = {{ model }}::find($id)) {
+            throw new HttpException(404, '{{ modelVariable }} not found');
+        }
+        ${{ modelVariable }}->delete();
+        return ${{ modelVariable }};
+    }
+}

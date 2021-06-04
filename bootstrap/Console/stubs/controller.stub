@@ -1,0 +1,19 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ rootNamespace }}Http\Controllers\Controller;
+use Luracast\Restler\Exceptions\HttpException;
+
+class {{ class }}
+{
+    /**
+     *  a listing of the resource.
+     *
+     * @return object[]
+     */
+    public function index()
+    {
+        return [];
+    }
+}

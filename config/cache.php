@@ -85,6 +85,6 @@ return [
     |
     */
 
-    'prefix' => 'laravel',
+    'prefix' => 'restler',
 
 ];
