@@ -17,7 +17,6 @@
   ],
   "require": {
     "php": "^7.2.5|^8",
-    "restler/framework": "^5",
     "illuminate/cache": "^8",
     "illuminate/database": "^8",
     "illuminate/events": "^8",

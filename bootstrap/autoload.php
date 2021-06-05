@@ -340,14 +340,14 @@ spl_autoload_register(
 |--------------------------------------------------------------------------
 */
 
-$app['config']['app.aliases'] += Scope::$classAliases + ['Scope' => 'Luracast\Restler\Scope'];
-
-Defaults::$cacheDirectory = $app['config']['cache.path'];
-HtmlFormat::$viewPath = $app['path'] . '/views';
-HtmlFormat::$cacheDirectory = $app['path.storage'] . '/views';
-
-HtmlFormat::$template = 'blade';
-//Forms::$style = FormStyles::$bootstrap3; // for v4 and below
-Forms::setStyles(new Bootstrap3Form); // for v5
-
-include BASE . '/routes/api.php';
+//$app['config']['app.aliases'] += Scope::$classAliases + ['Scope' => 'Luracast\Restler\Scope'];
+//
+//Defaults::$cacheDirectory = $app['config']['cache.path'];
+//HtmlFormat::$viewPath = $app['path'] . '/views';
+//HtmlFormat::$cacheDirectory = $app['path.storage'] . '/views';
+//
+//HtmlFormat::$template = 'blade';
+////Forms::$style = FormStyles::$bootstrap3; // for v4 and below
+//Forms::setStyles(new Bootstrap3Form); // for v5
+//
+//include BASE . '/routes/api.php';
