@@ -7,19 +7,10 @@ use Closure;
 use Illuminate\Console\Events\ArtisanStarting;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Database\Console\Migrations\FreshCommand;
-use Illuminate\Database\Console\Migrations\InstallCommand;
-use Illuminate\Database\Console\Migrations\MigrateCommand;
-use Illuminate\Database\Console\Migrations\MigrateMakeCommand;
-use Illuminate\Database\Console\Migrations\RefreshCommand;
-use Illuminate\Database\Console\Migrations\ResetCommand;
-use Illuminate\Database\Console\Migrations\RollbackCommand;
-use Illuminate\Database\Console\Migrations\StatusCommand;
+use Illuminate\Database\Console\DbCommand;
+use Illuminate\Database\Console\DumpCommand;
 use Illuminate\Database\Console\Seeds\SeedCommand;
 use Illuminate\Database\Console\WipeCommand;
-use Illuminate\Database\Migrations\DatabaseMigrationRepository;
-use Illuminate\Database\Migrations\MigrationCreator;
-use Illuminate\Database\Migrations\Migrator;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
 
@@ -86,8 +77,24 @@ class Artisan extends \Illuminate\Console\Application
             $console->add(new EnvironmentCommand());
             $console->add(new VendorPublishCommand($app['files']));
             $console->add(new FactoryMakeCommand($app['files']));
+            $console->add(new DbCommand());
+            $console->add(new DumpCommand());
+            $console->add(new WipeCommand());
 
             /*
+            use Illuminate\Database\Console\Migrations\FreshCommand;
+            use Illuminate\Database\Console\Migrations\InstallCommand;
+            use Illuminate\Database\Console\Migrations\MigrateCommand;
+            use Illuminate\Database\Console\Migrations\MigrateMakeCommand;
+            use Illuminate\Database\Console\Migrations\RefreshCommand;
+            use Illuminate\Database\Console\Migrations\ResetCommand;
+            use Illuminate\Database\Console\Migrations\RollbackCommand;
+            use Illuminate\Database\Console\Migrations\StatusCommand;
+
+            use Illuminate\Database\Migrations\DatabaseMigrationRepository;
+            use Illuminate\Database\Migrations\MigrationCreator;
+            use Illuminate\Database\Migrations\Migrator;
+
             // DB Migration Commands handled through service provider in config/app.php
             $app->instance(
                 'migration.repository',
@@ -102,7 +109,7 @@ class Artisan extends \Illuminate\Console\Application
                 new MigrationCreator($app['files'], $app->basePath('stubs'))
             );
             $console->add(new InstallCommand($app['migration.repository']));
-            $console->add(new WipeCommand());
+
             $console->add(new MigrateCommand($app['migrator'], $app['events']));
             $console->add(new MigrateMakeCommand($app['migration.creator'], $app['composer']));
             $console->add(new StatusCommand($app['migrator']));
