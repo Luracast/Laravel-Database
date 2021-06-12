@@ -8,6 +8,7 @@ It enables **artisan** command line tool with:
 ```
 Available commands:
 
+  db                Start a new database CLI session
   dump-autoload     Regenerate framework autoload files
   env               Display the current framework environment
   help              Display help for a command
@@ -17,10 +18,11 @@ Available commands:
   serve             Serve the application on the PHP development server
   tinker            Interact with your application
   
-  db
+db
   db:seed           Seed the database with records
-  
-  make
+  db:wipe           Drop all tables, views, and types
+
+make
   make:command      Create a new Artisan command
   make:controller   Create a new controller class
   make:factory      Create a new model factory
@@ -28,7 +30,7 @@ Available commands:
   make:model        Create a new Eloquent model class
   make:seeder       Create a new seeder class
   
-  migrate
+migrate
   migrate:fresh     Drop all tables and re-run all migrations
   migrate:install   Create the migration repository
   migrate:refresh   Reset and re-run all migrations
@@ -36,7 +38,7 @@ Available commands:
   migrate:rollback  Rollback the last database migration
   migrate:status    Show the status of each migration
   
-  vendor
+vendor
   vendor:publish    Publish any publishable assets from vendor packages
 ```
 
