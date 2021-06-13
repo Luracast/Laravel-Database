@@ -179,6 +179,13 @@ if (!function_exists('database_path')) {
     }
 }
 
+if (!function_exists('resolve')) {
+    function resolve($name, array $parameters = [])
+    {
+        return app($name, $parameters);
+    }
+}
+
 $app->instance('config', new Config(app('path.config'), $env));
 
 $app->singleton(
@@ -260,7 +267,7 @@ if (!function_exists('config')) {
     function config($path, $default = null)
     {
         if (is_string($path)) {
-            return $app['config'][$path] ?? $default;
+            return app()['config'][$path] ?? $default;
         }
     }
 }
