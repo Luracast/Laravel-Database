@@ -140,6 +140,11 @@ class Artisan extends \Illuminate\Console\Application
         foreach ($providers as $class) {
             /** @var ServiceProvider $instance */
             $instance = new $class($app);
+            if (isset($instance->bindings)) {
+                foreach ($instance->bindings as $abstract => $concrete) {
+                    $app->bind($abstract, $concrete);
+                }
+            }
             if (method_exists($instance, 'boot')) {
                 $instance->boot();
             }
