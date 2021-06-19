@@ -11,8 +11,11 @@ use Illuminate\Database\Console\DbCommand;
 use Illuminate\Database\Console\DumpCommand;
 use Illuminate\Database\Console\Seeds\SeedCommand;
 use Illuminate\Database\Console\WipeCommand;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
+use Bootstrap\Console\PackageDiscoverCommand;
 
 class Artisan extends \Illuminate\Console\Application
 {
@@ -126,6 +129,9 @@ class Artisan extends \Illuminate\Console\Application
             //Tinker Command
             $console->add(new TinkerCommand());
 
+            //Package AutoDiscovery
+            $console->add(new PackageDiscoverCommand());
+
             $app['events']->dispatch(new ArtisanStarting($console));
             $console->bootstrap();
             static::$instance = $console;
@@ -136,20 +142,37 @@ class Artisan extends \Illuminate\Console\Application
 
     protected static function registerServiceProviders($app)
     {
-        $providers = $app['config']['app.providers'];
+        $providers = Collection::make($app->config['app.providers'])
+            ->partition(function ($provider) {
+                return strpos($provider, 'Illuminate\\') === 0;
+            });
+
+        $providers->splice(1, 0, [$app->make(PackageManifest::class)->providers()]);
+
+        $providers = $providers->collapse()->toArray();
+
         foreach ($providers as $class) {
             /** @var ServiceProvider $instance */
             $instance = new $class($app);
-            if (isset($instance->bindings)) {
-                foreach ($instance->bindings as $abstract => $concrete) {
-                    $app->bind($abstract, $concrete);
+            $instance->register();
+            if (property_exists($instance, 'bindings')) {
+                foreach ($instance->bindings as $key => $value) {
+                    $app->bind($key, $value);
+                }
+            }
+
+            if (property_exists($instance, 'singletons')) {
+                foreach ($instance->singletons as $key => $value) {
+                    $app->singleton($key, $value);
                 }
             }
             if (method_exists($instance, 'boot')) {
                 $instance->boot();
             }
-            $instance->register();
         }
+
+//        (new ProviderRepository($app, new Filesystem, $app->getCachedServicesPath()))
+//            ->load($providers->collapse()->toArray());
     }
 
     /**

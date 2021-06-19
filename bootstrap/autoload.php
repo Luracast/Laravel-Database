@@ -17,6 +17,7 @@ define('BASE', dirname(__DIR__));
 require BASE . '/vendor/autoload.php';
 
 use Bootstrap\Config\Config;
+use Bootstrap\Console\PackageManifest;
 use Bootstrap\Container\Application;
 use Illuminate\Cache\CacheManager;
 use Illuminate\Database\Capsule\Manager as Database;
@@ -215,6 +216,12 @@ $app->singleton(
     }
 );
 
+$app->singleton(PackageManifest::class, function () use ($app) {
+    return new PackageManifest(
+        new Filesystem, $app->basePath(), $app->getCachedPackagesPath()
+    );
+});
+
 $app->singleton(
     'db',
     function () use ($app) {
@@ -224,7 +231,7 @@ $app->singleton(
         $db = new Database($app);
         $config['database.fetch'] = $fetch;
         $config['database.default'] = $default;
-        $db->addConnection($config['database.connections'][$default]);
+        $db->addConnection($config["database.connections.$default"]);
         $db->setEventDispatcher($app['events']);
         $db->setAsGlobal();
         $db->bootEloquent();

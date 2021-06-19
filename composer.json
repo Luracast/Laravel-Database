@@ -16,14 +16,13 @@
     }
   ],
   "require": {
-    "php": "^7.2.5|^8",
+    "php": "^7.3|^8",
     "illuminate/cache": "^8",
     "illuminate/database": "^8",
     "illuminate/events": "^8",
     "illuminate/filesystem": "^8",
     "illuminate/pagination": "^8",
     "league/flysystem": "^1.0",
-    "luracast/config": "2.*",
     "psy/psysh": "^0.10.4",
     "symfony/process": "^5",
     "vlucas/phpdotenv": "^5"
@@ -40,13 +39,11 @@
   },
   "autoload": {
     "psr-4": {
+      "App\\": "app/",
       "Bootstrap\\": "bootstrap/",
-      "App\\": "app/"
-    },
-    "classmap": [
-      "database/seeds",
-      "database/factories"
-    ]
+      "Database\\Factories\\": "database/factories/",
+      "Database\\Seeders\\": "database/seeders/"
+    }
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
@@ -58,6 +55,10 @@
   "scripts": {
     "post-root-package-install": [
       "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+    ],
+    "post-autoload-dump": [
+      "Bootstrap\\Console\\ComposerScripts::postAutoloadDump",
+      "@php artisan package:discover --ansi"
     ]
   }
 }
