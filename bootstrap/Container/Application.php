@@ -13,6 +13,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Env;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use RuntimeException;
 
 class Application extends Container implements ApplicationContract
 {
@@ -25,6 +26,8 @@ class Application extends Container implements ApplicationContract
      * @var string
      */
     protected $basePath;
+    protected $storagePath;
+    protected $databasePath;
 
     /**
      * The prefixes of absolute cache paths for use during normalization.
@@ -62,6 +65,10 @@ class Application extends Container implements ApplicationContract
      * @var callable[]
      */
     protected $terminatingCallbacks = [];
+    /**
+     * @var int|string
+     */
+    protected $namespace;
 
     /**
      * Create a new Lumen application instance.
@@ -73,20 +80,18 @@ class Application extends Container implements ApplicationContract
     public function __construct(string $basePath = null)
     {
         $this->basePath = $basePath;
-        $this->bootstrapContainer();
-        //$this->registerErrorHandling();
-    }
-
-    /**
-     * Bootstrap the application container.
-     *
-     * @return void
-     */
-    protected function bootstrapContainer()
-    {
         static::setInstance($this);
         $this->instance('app', $this);
         $this->instance('path', $this->path());
+        $this->instance('path', $this->path());
+        $this->instance('path.base', $this->basePath());
+        $this->instance('path.config', $this->configPath());
+        $this->instance('path.public', $this->publicPath());
+        $this->instance('path.storage', $this->storagePath());
+        $this->instance('path.database', $this->databasePath());
+        $this->instance('path.resources', $this->resourcePath());
+        $this->instance('path.bootstrap', $this->bootstrapPath());
+        //$this->registerErrorHandling();
     }
 
     /**
@@ -97,14 +102,6 @@ class Application extends Container implements ApplicationContract
     public function path(): string
     {
         return $this->basePath . DIRECTORY_SEPARATOR . 'app';
-    }
-
-    /**
-     * @return string
-     */
-    public function version(): string
-    {
-        return static::VERSION;
     }
 
     /**
@@ -138,15 +135,14 @@ class Application extends Container implements ApplicationContract
         return php_sapi_name() === 'cli';
     }
 
-    /**
-     * Get the path to the database directory.
-     *
-     * @param string $path Optionally, a path to append to the database path
-     * @return string
-     */
-    public function databasePath($path = ''): string
+    public function configPath($path = ''): string
     {
-        return database_path();
+        return $this->basePath . DIRECTORY_SEPARATOR . 'config' . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+    }
+
+    public function publicPath()
+    {
+        return $this->basePath . DIRECTORY_SEPARATOR . 'public';
     }
 
     /**
@@ -158,7 +154,37 @@ class Application extends Container implements ApplicationContract
      */
     public function storagePath(string $path = null): string
     {
-        return storage_path($path);
+        return $this->storagePath ?: $this->basePath . DIRECTORY_SEPARATOR . 'storage';
+    }
+
+    /**
+     * Get the path to the database directory.
+     *
+     * @param string $path Optionally, a path to append to the database path
+     * @return string
+     */
+    public function databasePath($path = ''): string
+    {
+        return ($this->databasePath ?: $this->basePath . DIRECTORY_SEPARATOR . 'database') .
+            ($path ? DIRECTORY_SEPARATOR . $path : $path);
+    }
+
+    public function resourcePath($path = ''): string
+    {
+        return $this->basePath . DIRECTORY_SEPARATOR . 'resources' . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+    }
+
+    public function bootstrapPath($path = ''): string
+    {
+        return $this->basePath . DIRECTORY_SEPARATOR . 'bootstrap' . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+    }
+
+    /**
+     * @return string
+     */
+    public function version(): string
+    {
+        return static::VERSION;
     }
 
     /**
@@ -235,25 +261,6 @@ class Application extends Container implements ApplicationContract
     }
 
     /**
-     * Bind the installation paths to the application.
-     *
-     * @param array $paths
-     *
-     * @return void
-     */
-    public function bindInstallPaths(array $paths)
-    {
-        $this->instance('path', realpath($paths['app']));
-
-        // Here we will bind the install paths into the container as strings that can be
-        // accessed from any point in the system. Each path key is prefixed with path
-        // so that they have the consistent naming convention inside the container.
-        foreach (array_except($paths, ['app']) as $key => $value) {
-            $this->instance("path.{$key}", realpath($value));
-        }
-    }
-
-    /**
      * Register an application error handler.
      *
      * @param Closure $callback
@@ -266,28 +273,29 @@ class Application extends Container implements ApplicationContract
     }
 
     /**
-     * Get Application Namespace
+     * Get the application namespace.
      *
-     * @return int|string
+     * @return string
+     *
+     * @throws \RuntimeException
      */
     public function getNamespace()
     {
-        return getAppNamespace();
-    }
+        if (!is_null($this->namespace)) {
+            return $this->namespace;
+        }
 
-    public function bootstrapPath($path = ''): string
-    {
-        return $this->basePath . DIRECTORY_SEPARATOR . 'bootstrap' . ($path ? DIRECTORY_SEPARATOR . $path : $path);
-    }
+        $composer = json_decode(file_get_contents($this->basePath('composer.json')), true);
 
-    public function configPath($path = ''): string
-    {
-        return $this->basePath . DIRECTORY_SEPARATOR . 'config' . ($path ? DIRECTORY_SEPARATOR . $path : $path);
-    }
+        foreach ((array)data_get($composer, 'autoload.psr-4') as $namespace => $path) {
+            foreach ((array)$path as $pathChoice) {
+                if (realpath($this->path()) === realpath($this->basePath($pathChoice))) {
+                    return $this->namespace = $namespace;
+                }
+            }
+        }
 
-    public function resourcePath($path = ''): string
-    {
-        return $this->basePath . DIRECTORY_SEPARATOR . 'resources' . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+        throw new RuntimeException('Unable to detect application namespace.');
     }
 
     public function runningUnitTests(): bool
@@ -297,7 +305,7 @@ class Application extends Container implements ApplicationContract
 
     public function isDownForMaintenance()
     {
-        return file_exists($this->storagePath().'/framework/down');
+        return file_exists($this->storagePath() . '/framework/down');
     }
 
     public function registerConfiguredProviders()
@@ -313,11 +321,6 @@ class Application extends Container implements ApplicationContract
             ->load($providers->collapse()->toArray());
     }
 
-    public function addDeferredServices(array $services)
-    {
-        $this->deferredServices = array_merge($this->deferredServices, $services);
-    }
-
     /**
      * Get the path to the cached services.php file.
      *
@@ -331,8 +334,8 @@ class Application extends Container implements ApplicationContract
     /**
      * Normalize a relative or absolute path to a cache file.
      *
-     * @param  string  $key
-     * @param  string  $default
+     * @param string $key
+     * @param string $default
      * @return string
      */
     protected function normalizeCachePath($key, $default): string
@@ -346,28 +349,186 @@ class Application extends Container implements ApplicationContract
             : $this->basePath($env);
     }
 
-    public function getProvider($provider)
+    public function addDeferredServices(array $services)
     {
-        return array_values($this->getProviders($provider))[0] ?? null;
+        $this->deferredServices = array_merge($this->deferredServices, $services);
     }
 
-    protected function markAsRegistered($provider)
+    /**
+     * Boot the application's service providers.
+     *
+     * @return void
+     */
+    public function boot()
     {
-        $this->serviceProviders[] = $provider;
+        if ($this->isBooted()) {
+            return;
+        }
 
-        $this->loadedProviders[get_class($provider)] = true;
+        // Once the application has booted we will also fire some "booted" callbacks
+        // for any listeners that need to do work after this initial booting gets
+        // finished. This is useful when ordering the boot-up processes we run.
+        $this->fireAppCallbacks($this->bootingCallbacks);
+
+        array_walk($this->serviceProviders, function ($p) {
+            $this->bootProvider($p);
+        });
+
+        $this->booted = true;
+
+        $this->fireAppCallbacks($this->bootedCallbacks);
+    }
+
+    /**
+     * Determine if the application has booted.
+     *
+     * @return bool
+     */
+    public function isBooted(): bool
+    {
+        return $this->booted;
+    }
+
+    /**
+     * Call the booting callbacks for the application.
+     *
+     * @param callable[] $callbacks
+     * @return void
+     */
+    protected function fireAppCallbacks(array $callbacks)
+    {
+        foreach ($callbacks as $callback) {
+            $callback($this);
+        }
+    }
+
+    /**
+     * Boot the given service provider.
+     *
+     * @param \Illuminate\Support\ServiceProvider $provider
+     * @return void
+     */
+    protected function bootProvider(ServiceProvider $provider)
+    {
+        $provider->callBootingCallbacks();
+
+        if (method_exists($provider, 'boot')) {
+            $this->call([$provider, 'boot']);
+        }
+
+        $provider->callBootedCallbacks();
+    }
+
+    public function booted($callback)
+    {
+        $this->bootedCallbacks[] = $callback;
+
+        if ($this->isBooted()) {
+            $this->fireAppCallbacks([$callback]);
+        }
+    }
+
+    public function bootstrapWith(array $bootstrappers)
+    {
+        $this->hasBeenBootstrapped = true;
+
+        foreach ($bootstrappers as $bootstrapper) {
+            $this['events']->dispatch('bootstrapping: ' . $bootstrapper, [$this]);
+
+            $this->make($bootstrapper)->bootstrap($this);
+
+            $this['events']->dispatch('bootstrapped: ' . $bootstrapper, [$this]);
+        }
+    }
+
+    /**
+     * Get the path to the cached packages.php file.
+     *
+     * @return string
+     */
+    public function getCachedPackagesPath()
+    {
+        return $this->normalizeCachePath('APP_PACKAGES_CACHE', 'cache/packages.php');
+    }
+
+    public function getLocale()
+    {
+        return $this['config']->get('app.locale');
+    }
+
+    public function hasBeenBootstrapped(): bool
+    {
+        return $this->hasBeenBootstrapped;
+    }
+
+    public function loadDeferredProviders()
+    {
+        // We will simply spin through each of the deferred providers and register each
+        // one and boot them if the application has booted. This should make each of
+        // the remaining services available to this application for immediate use.
+        foreach ($this->deferredServices as $service => $provider) {
+            $this->loadDeferredProvider($service);
+        }
+
+        $this->deferredServices = [];
+    }
+
+    public function loadDeferredProvider($service)
+    {
+        if (!$this->isDeferredService($service)) {
+            return;
+        }
+
+        $provider = $this->deferredServices[$service];
+
+        // If the service provider has not already been loaded and registered we can
+        // register it with the application and remove the service from this list
+        // of deferred services, since it will already be loaded on subsequent.
+        if (!isset($this->loadedProviders[$provider])) {
+            $this->registerDeferredProvider($provider, $service);
+        }
+    }
+
+    public function isDeferredService($service): bool
+    {
+        return isset($this->deferredServices[$service]);
+    }
+
+    /**
+     * Register a deferred provider and service.
+     *
+     * @param string $provider
+     * @param string|null $service
+     * @return void
+     */
+    public function registerDeferredProvider($provider, $service = null)
+    {
+        // Once the provider that provides the deferred service has been registered we
+        // will remove it from our local list of the deferred services with related
+        // providers so that this container does not try to resolve it out again.
+        if ($service) {
+            unset($this->deferredServices[$service]);
+        }
+
+        $this->register($instance = new $provider($this));
+
+        if (!$this->isBooted()) {
+            $this->booting(function () use ($instance) {
+                $this->bootProvider($instance);
+            });
+        }
     }
 
     /**
      * Register a service provider with the application.
      *
-     * @param  \Illuminate\Support\ServiceProvider|string  $provider
-     * @param  bool  $force
+     * @param \Illuminate\Support\ServiceProvider|string $provider
+     * @param bool $force
      * @return \Illuminate\Support\ServiceProvider
      */
     public function register($provider, $force = false)
     {
-        if (($registered = $this->getProvider($provider)) && ! $force) {
+        if (($registered = $this->getProvider($provider)) && !$force) {
             return $registered;
         }
 
@@ -407,147 +568,9 @@ class Application extends Container implements ApplicationContract
         return $provider;
     }
 
-    /**
-     * Determine if the application has booted.
-     *
-     * @return bool
-     */
-    public function isBooted(): bool
+    public function getProvider($provider)
     {
-        return $this->booted;
-    }
-
-    /**
-     * Boot the application's service providers.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        if ($this->isBooted()) {
-            return;
-        }
-
-        // Once the application has booted we will also fire some "booted" callbacks
-        // for any listeners that need to do work after this initial booting gets
-        // finished. This is useful when ordering the boot-up processes we run.
-        $this->fireAppCallbacks($this->bootingCallbacks);
-
-        array_walk($this->serviceProviders, function ($p) {
-            $this->bootProvider($p);
-        });
-
-        $this->booted = true;
-
-        $this->fireAppCallbacks($this->bootedCallbacks);
-    }
-
-    /**
-     * Call the booting callbacks for the application.
-     *
-     * @param  callable[]  $callbacks
-     * @return void
-     */
-    protected function fireAppCallbacks(array $callbacks)
-    {
-        foreach ($callbacks as $callback) {
-            $callback($this);
-        }
-    }
-
-    /**
-     * Boot the given service provider.
-     *
-     * @param  \Illuminate\Support\ServiceProvider  $provider
-     * @return void
-     */
-    protected function bootProvider(ServiceProvider $provider)
-    {
-        $provider->callBootingCallbacks();
-
-        if (method_exists($provider, 'boot')) {
-            $this->call([$provider, 'boot']);
-        }
-
-        $provider->callBootedCallbacks();
-    }
-
-    /**
-     * Register a deferred provider and service.
-     *
-     * @param  string  $provider
-     * @param  string|null  $service
-     * @return void
-     */
-    public function registerDeferredProvider($provider, $service = null)
-    {
-        // Once the provider that provides the deferred service has been registered we
-        // will remove it from our local list of the deferred services with related
-        // providers so that this container does not try to resolve it out again.
-        if ($service) {
-            unset($this->deferredServices[$service]);
-        }
-
-        $this->register($instance = new $provider($this));
-
-        if (! $this->isBooted()) {
-            $this->booting(function () use ($instance) {
-                $this->bootProvider($instance);
-            });
-        }
-    }
-
-    /**
-     * Resolve a service provider instance from the class name.
-     *
-     * @param  string  $provider
-     * @return \Illuminate\Support\ServiceProvider
-     */
-    public function resolveProvider($provider)
-    {
-        return new $provider($this);
-    }
-
-    public function booting($callback)
-    {
-        $this->bootingCallbacks[] = $callback;
-    }
-
-    public function booted($callback)
-    {
-        $this->bootedCallbacks[] = $callback;
-
-        if ($this->isBooted()) {
-            $this->fireAppCallbacks([$callback]);
-        }
-    }
-
-    public function bootstrapWith(array $bootstrappers)
-    {
-        $this->hasBeenBootstrapped = true;
-
-        foreach ($bootstrappers as $bootstrapper) {
-            $this['events']->dispatch('bootstrapping: '.$bootstrapper, [$this]);
-
-            $this->make($bootstrapper)->bootstrap($this);
-
-            $this['events']->dispatch('bootstrapped: '.$bootstrapper, [$this]);
-        }
-    }
-
-    /**
-     * Get the path to the cached packages.php file.
-     *
-     * @return string
-     */
-    public function getCachedPackagesPath()
-    {
-        return $this->normalizeCachePath('APP_PACKAGES_CACHE', 'cache/packages.php');
-    }
-
-    public function getLocale()
-    {
-        return $this['config']->get('app.locale');
+        return array_values($this->getProviders($provider))[0] ?? null;
     }
 
     public function getProviders($provider)
@@ -559,42 +582,27 @@ class Application extends Container implements ApplicationContract
         });
     }
 
-    public function hasBeenBootstrapped(): bool
+    /**
+     * Resolve a service provider instance from the class name.
+     *
+     * @param string $provider
+     * @return \Illuminate\Support\ServiceProvider
+     */
+    public function resolveProvider($provider)
     {
-        return $this->hasBeenBootstrapped;
+        return new $provider($this);
     }
 
-    public function loadDeferredProviders()
+    protected function markAsRegistered($provider)
     {
-        // We will simply spin through each of the deferred providers and register each
-        // one and boot them if the application has booted. This should make each of
-        // the remaining services available to this application for immediate use.
-        foreach ($this->deferredServices as $service => $provider) {
-            $this->loadDeferredProvider($service);
-        }
+        $this->serviceProviders[] = $provider;
 
-        $this->deferredServices = [];
+        $this->loadedProviders[get_class($provider)] = true;
     }
 
-    public function loadDeferredProvider($service)
+    public function booting($callback)
     {
-        if (! $this->isDeferredService($service)) {
-            return;
-        }
-
-        $provider = $this->deferredServices[$service];
-
-        // If the service provider has not already been loaded and registered we can
-        // register it with the application and remove the service from this list
-        // of deferred services, since it will already be loaded on subsequent.
-        if (! isset($this->loadedProviders[$provider])) {
-            $this->registerDeferredProvider($provider, $service);
-        }
-    }
-
-    public function isDeferredService($service): bool
-    {
-        return isset($this->deferredServices[$service]);
+        $this->bootingCallbacks[] = $callback;
     }
 
     public function setLocale($locale)
@@ -602,7 +610,6 @@ class Application extends Container implements ApplicationContract
         $this['config']->set('app.locale', $locale);
 
         $this['translator']->setLocale($locale);
-
         //$this['events']->dispatch(new LocaleUpdated($locale));
     }
 

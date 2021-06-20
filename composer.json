@@ -30,7 +30,6 @@
   "require-dev": {
     "doctrine/dbal": "~2.10",
     "illuminate/console": "^8",
-    "illuminate/queue": "^8",
     "illuminate/view": "^8",
     "laravel/helpers": "^1"
   },
@@ -38,6 +37,9 @@
     "doctrine/dbal": "Allow renaming columns and dropping SQLite columns."
   },
   "autoload": {
+    "files": [
+      "bootstrap/helpers.php"
+    ],
     "psr-4": {
       "App\\": "app/",
       "Bootstrap\\": "bootstrap/",
