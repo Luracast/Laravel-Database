@@ -66,6 +66,17 @@ class ModelMakeCommand extends GeneratorCommand
     }
 
     /**
+     * Get the default namespace for the class.
+     *
+     * @param string $rootNamespace
+     * @return string
+     */
+    protected function getDefaultNamespace($rootNamespace)
+    {
+        return $rootNamespace . '\Models';
+    }
+
+    /**
      * Create a model factory for the model.
      *
      * @return void
@@ -204,9 +215,7 @@ class ModelMakeCommand extends GeneratorCommand
         } elseif (ends_with($name, ['id', 'ID'])) {
             //int
             $type = 'int   ';
-        } else {
-            //assume string
-        }
+        } // else //assume string
 
         return [$type, $subtype];
     }

@@ -28,6 +28,7 @@ class Application extends Container implements ApplicationContract
     protected $basePath;
     protected $storagePath;
     protected $databasePath;
+    protected $appPath;
 
     /**
      * The prefixes of absolute cache paths for use during normalization.
@@ -83,7 +84,6 @@ class Application extends Container implements ApplicationContract
         static::setInstance($this);
         $this->instance('app', $this);
         $this->instance('path', $this->path());
-        $this->instance('path', $this->path());
         $this->instance('path.base', $this->basePath());
         $this->instance('path.config', $this->configPath());
         $this->instance('path.public', $this->publicPath());
@@ -97,11 +97,14 @@ class Application extends Container implements ApplicationContract
     /**
      * Get the path to the application "app" directory.
      *
+     * @param string $path
      * @return string
      */
-    public function path(): string
+    public function path($path = '')
     {
-        return $this->basePath . DIRECTORY_SEPARATOR . 'app';
+        $appPath = $this->appPath ?: $this->basePath('app');
+
+        return $appPath . ($path ? DIRECTORY_SEPARATOR . $path : $path);
     }
 
     /**
@@ -116,23 +119,9 @@ class Application extends Container implements ApplicationContract
         if (isset($this->basePath)) {
             return $this->basePath . ($path ? '/' . $path : $path);
         }
-        if ($this->runningInConsole()) {
-            $this->basePath = getcwd();
-        } else {
-            $this->basePath = realpath(getcwd() . '/../');
-        }
+        $this->basePath = realpath(__DIR__ . '/../../');
 
         return $this->basePath($path);
-    }
-
-    /**
-     * Determine if the application is running in the console.
-     *
-     * @return bool
-     */
-    public function runningInConsole(): bool
-    {
-        return php_sapi_name() === 'cli';
     }
 
     public function configPath($path = ''): string
@@ -177,6 +166,16 @@ class Application extends Container implements ApplicationContract
     public function bootstrapPath($path = ''): string
     {
         return $this->basePath . DIRECTORY_SEPARATOR . 'bootstrap' . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+    }
+
+    /**
+     * Determine if the application is running in the console.
+     *
+     * @return bool
+     */
+    public function runningInConsole(): bool
+    {
+        return php_sapi_name() === 'cli';
     }
 
     /**
