@@ -16,7 +16,7 @@
     }
   ],
   "require": {
-    "php": "^7.3|^8",
+    "php": "^7.4|^8",
     "illuminate/cache": "^8",
     "illuminate/database": "^8",
     "illuminate/events": "^8",
