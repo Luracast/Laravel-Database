@@ -12,8 +12,8 @@ define('APP_START', microtime(true));
 | loading of any our classes "manually". Feels great to relax.
 |
 */
+require __DIR__.'/helpers.php';
 define('BASE', dirname(__DIR__));
-
 require BASE . '/vendor/autoload.php';
 
 use Bootstrap\Config\Config;
@@ -34,7 +34,7 @@ use Luracast\Restler\UI\Bootstrap3Form;
 use Luracast\Restler\UI\Forms;
 
 
-$app = new Application();
+$app = new Application(BASE);
 
 /*
 |--------------------------------------------------------------------------
