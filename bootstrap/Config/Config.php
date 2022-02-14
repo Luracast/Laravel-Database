@@ -66,6 +66,7 @@ class Config implements ArrayAccess, ConfigContract
         return static::$instance;
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         $this->container[$offset] = null;
@@ -104,6 +105,7 @@ class Config implements ArrayAccess, ConfigContract
         return $this->offsetExists($key);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         if (isset($this->container[$offset])) {
@@ -154,6 +156,7 @@ class Config implements ArrayAccess, ConfigContract
         return false;
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->offsetExists($offset) ? $this->container[$offset] : null;
@@ -171,6 +174,7 @@ class Config implements ArrayAccess, ConfigContract
         $this->offsetSet($key, $value);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         if (is_null($offset)) {
