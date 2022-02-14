@@ -28,14 +28,13 @@ use Bootstrap\Contracts\Config as ConfigContract;
  */
 class Config implements ArrayAccess, ConfigContract
 {
-    /** @var  static */
-    protected static $instance;
-    protected $container = array();
+    /** @var  null|static */
+    protected static ?Config $instance = null;
+    protected array $container = [];
     /** @var  string */
-    protected $path;
+    protected string $path;
     /** @var  string */
-    protected $environment;
-    protected $parsed = [];
+    protected string $environment;
 
     public function __construct($path, $environment = null)
     {
@@ -54,59 +53,31 @@ class Config implements ArrayAccess, ConfigContract
      *
      * @return Config
      */
-    public static function init(string $path, ?string $environment = null): Config
+    public static function init(string $path, string $environment = null): ?Config
     {
         if (!static::$instance) {
             static::$instance = new Config($path, $environment);
         } else {
             static::$instance->path = $path;
             static::$instance->environment = $environment;
-            static::$instance->container = array();
+            static::$instance->container = [];
         }
+
         return static::$instance;
     }
 
-    #[\ReturnTypeWillChange]
-    public function offsetUnset($offset)
-    {
-        $this->container[$offset] = null;
-    }
-
-    /**
-     * Get all the configuration items for the application.
-     *
-     * @return array
-     */
-    public function all(): array
-    {
-        return $this->container;
-    }
-
-    /**
-     * Get the specified configuration value.
-     *
-     * @param string $key
-     * @param mixed $default
-     * @return mixed
-     */
     public function get($key, $default = null)
     {
-        return ($this->has($key)) ? $this->offsetGet($key) : $default;
-    }
-
-    /**
-     * Determine if the given configuration value exists.
-     *
-     * @param string $key
-     * @return bool
-     */
-    public function has($key)
-    {
-        return $this->offsetExists($key);
+        return $this->offsetGet($key) ?: $default;
     }
 
     #[\ReturnTypeWillChange]
-    public function offsetExists($offset)
+    public function offsetGet($offset)
+    {
+        return $this->offsetExists($offset) ? $this->container[$offset] : null;
+    }
+
+    public function offsetExists($offset): bool
     {
         if (isset($this->container[$offset])) {
             return true;
@@ -121,57 +92,67 @@ class Config implements ArrayAccess, ConfigContract
                 $p = $p[$name];
             }
             $this->container[$offset] = $p;
+
             return true;
-        } elseif (!isset($this->parsed[$name])) {
-            $this->parsed[$name] = true;
+        } else {
             //lazy load the config file
-            if ($files = glob(
-                '{' . $this->path . '/' . $name . '.php,' . $this->path . '/' . $name . '.*.php}',
-                GLOB_BRACE
-            )) {
-                foreach ($files as $file) {
-                    $base = basename($file, '.php');
-                    $parts = explode('.', $base);
-                    $p = &$this->container;
-                    $lastPart = end($parts);
-                    foreach ($parts as $part) {
-                        if ($part === $lastPart) {
-                            $p[$part] = include $file;
-                        } else {
-                            if (!isset($p[$part])) {
-                                $p[$part] = [];
-                            }
-                            $p = &$p[$part];
-                        }
-                    }
-                }
+            if (is_readable("$this->path/$name.php")) {
                 //merge environment file if available
-                //$this->container[$name] = include "$this->path/$name.php";
+                $this->container[$name] = include "$this->path/$name.php";
                 if (!empty($this->environment) && is_readable($file = "$this->path/$this->environment/$name.php")) {
                     $this->container[$name] = array_replace_recursive($this->container[$name], (include $file));
                 }
+
                 return $this->offsetExists($offset);
             }
         }
+
         return false;
     }
 
-    #[\ReturnTypeWillChange]
-    public function offsetGet($offset)
+    public function set($key, $value = null)
     {
-        return $this->offsetExists($offset) ? $this->container[$offset] : null;
+        if (is_array($key)) {
+            foreach ($key as $innerKey => $innerValue) {
+                static::arraySet($this->container, $innerKey, $innerValue);
+            }
+        } else {
+            static::arraySet($this->container, $key, $value);
+        }
     }
 
     /**
-     * Set a given configuration value.
+     * Set an array item to a given value using "dot" notation.
      *
-     * @param array|string $key
+     * If no key is given to the method, the entire array will be replaced.
+     *
+     * @param array $array
+     * @param string|null $key
      * @param mixed $value
-     * @return void
+     *
+     * @return array
      */
-    public function set($key, $value = null)
+    private static function arraySet(array &$array, ?string $key, $value): array
     {
-        $this->offsetSet($key, $value);
+        if (is_null($key)) {
+            return $array = $value;
+        }
+        $keys = explode('.', $key);
+
+        while (count($keys) > 1) {
+            $key = array_shift($keys);
+
+            // If the key doesn't exist at this depth, we will just create an empty array
+            // to hold the next value, allowing us to create the arrays to hold final
+            // values at the correct depth. Then we'll keep digging into the array.
+            if (!isset($array[$key]) || !is_array($array[$key])) {
+                $array[$key] = array();
+            }
+            $array = &$array[$key];
+        }
+        $array[array_shift($keys)] = $value;
+
+        return $array;
     }
 
     #[\ReturnTypeWillChange]
@@ -182,6 +163,28 @@ class Config implements ArrayAccess, ConfigContract
         } else {
             $this->container[$offset] = $value;
         }
+    }
+
+    #[\ReturnTypeWillChange]
+    public function offsetUnset($offset)
+    {
+        $this->container[$offset] = null;
+    }
+
+    /**
+     * Determine if the given configuration value exists.
+     *
+     * @param string $key
+     * @return bool
+     */
+    public function has($key): bool
+    {
+        return $this->offsetExists($key);
+    }
+
+    public function all()
+    {
+        return $this->container;
     }
 
     /**
